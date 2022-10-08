@@ -3,7 +3,6 @@ adds a datacite to your BIDS dataset
 details on the format of datacite for GIN: https://gin.g-node.org/G-Node/Info/wiki/DOIfile
 """
 
-from copy import deepcopy
 import json
 from pathlib import Path
 
@@ -192,6 +191,7 @@ def get_article_id(reference):
 
     return article_id
 
+
 def get_reference_details(reference):
 
     this_reference = {"citation": reference}
@@ -330,6 +330,8 @@ def main(keywords):
 
     references = update_references(ds_descr, skip_prompt)
     datacite["references"] = references
+    tmp = [ref["citation"] for ref in references]
+    ds_descr["ReferencesAndLinks"] = tmp
 
     funding = update_funding(ds_descr, skip_prompt)
     datacite["funding"] = funding
