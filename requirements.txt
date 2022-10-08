@@ -1,0 +1,6 @@
+rich
+ruamel.yaml
+black
+requests
+isort
+crossref-commons
