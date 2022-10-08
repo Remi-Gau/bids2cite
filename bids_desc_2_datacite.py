@@ -161,55 +161,94 @@ def update_funding(ds_descr: dict, skip_prompt: bool = False) -> dict:
             default="yes",
             choices=["yes", "no"],
         )
-        if add_funding == "yes":
-            grant = Prompt.ask(
-                prompt_format("Please enter a funding (for exmaple: 'EU, EU.12345')")
-            )
-        else:
+        if add_funding != "yes":
             break
 
+        grant = Prompt.ask(
+            prompt_format("Please enter a funding (for example: 'EU, EU.12345')")
+        )
+        funding.append(grant)
     return funding
 
 
-def update_references(ds_descr: dict) -> list:
+def get_article_id(reference):
+    """Find the article DOI or PMID"""
+
+    article_id = None
+
+    if "pmid:" in reference:
+        pmid = reference.split("pmid:")[1]
+        article_id = f"pmid:{pmid}"
+    elif "www.ncbi.nlm.nih.gov/pubmed/" in reference:
+        pmid = reference.split("www.ncbi.nlm.nih.gov/pubmed/")[1]
+        article_id = f"pmid:{pmid}"
+
+    elif "doi:" in reference:
+        doi = reference.split("doi:")[1]
+        article_id = f"doi:{doi}"
+    elif "https://doi.org/:" in reference:
+        doi = reference.split("https://doi.org/")[1]
+        article_id = f"doi:{doi}"
+
+    return article_id
+
+def get_reference_details(reference):
+
+    this_reference = {"citation": reference}
+
+    article_id = get_article_id(reference)
+    if article_id.startswith("pmid"):
+        article_info = get_article_info_from_pmid(article_id.split("pmid:")[1])
+    elif article_id.startswith("doi"):
+        article_info = get_article_info_from_doi(article_id.split("doi:")[1])
+
+    if article_info is not None:
+        this_reference["id"] = article_id
+        this_reference[
+            "citation"
+        ] = f"{', '.join(article_info['authors'])}; {article_info['title']}; {article_info['journal']}; {article_info['year']}; {article_id}"
+
+    this_reference["reftype"] = "IsSupplementTo"
+
+    return this_reference
+
+
+def update_references(ds_descr: dict, skip_prompt: bool = False) -> list:
 
     references = []
 
     if "ReferencesAndLinks" in ds_descr:
         for reference in ds_descr["ReferencesAndLinks"]:
 
-            this_reference = {"citation": reference}
-
-            pmid = None
-            doi = None
-
-            if "pmid:" in reference:
-                pmid = reference.split("pmid:")[1]
-            elif "www.ncbi.nlm.nih.gov/pubmed/" in reference:
-                pmid = reference.split("www.ncbi.nlm.nih.gov/pubmed/")[1]
-            if pmid is not None:
-                article_info = get_article_info_from_pmid(pmid)
-
-            elif "doi:" in reference:
-                doi = reference.split("doi:")[1]
-            elif "https://doi.org/:" in reference:
-                doi = reference.split("https://doi.org/")[1]
-            if doi is not None:
-                article_info = get_article_info_from_doi(doi)
-
-            if doi is not None or pmid is not None:
-                this_reference["id"] = article_info["id"]
-                this_reference[
-                    "citation"
-                ] = f"""{', '.join(article_info['authors'])}; 
-{article_info['title']}; 
-{article_info['journal']}; 
-{article_info['year']}; 
-{article_info['id']}"""
-
-            this_reference["reftype"] = "IsSupplementTo"
+            this_reference = get_reference_details(reference)
 
             references.append(this_reference)
+
+    if skip_prompt:
+        return references
+
+    add_references = "yes"
+    while add_references == "yes":
+        print("Current references")
+        for i, ref in enumerate(references):
+            print(f"{i+1}. [blue][bold]{ref['citation']}[/bold][/blue]")
+
+        add_funding = Prompt.ask(
+            prompt_format("Do you want to add more references?"),
+            default="yes",
+            choices=["yes", "no"],
+        )
+        if add_funding == "yes":
+            reference = Prompt.ask(
+                prompt_format(
+                    """Please enter a references
+(for example: 'doi:10.1016/j.neuroimage.2019.116081' or 'pmid:12345678')"""
+                )
+            )
+            this_reference = get_reference_details(reference)
+            references.append(this_reference)
+        else:
+            break
 
     return references
 
@@ -230,7 +269,6 @@ def get_article_info_from_doi(doi: str):
         "journal": content["short-container-title"][0],
         "year": content["created"]["date-parts"][0][0],
         "authors": authors,
-        "id": f"doi:{doi}",
     }
 
 
@@ -256,7 +294,6 @@ def get_article_info_from_pmid(pmid: str):
             "journal": content["source"],
             "year": content["pubdate"].split(" ")[0],
             "authors": authors,
-            "id": f"pmid:{pmid}",
         }
 
 
@@ -291,7 +328,7 @@ def main(keywords):
             lastname = " ".join(author.split(" ")[1:])
             datacite["authors"].append({"firstname": firstname, "lastname": lastname})
 
-    references = update_references(ds_descr)
+    references = update_references(ds_descr, skip_prompt)
     datacite["references"] = references
 
     funding = update_funding(ds_descr, skip_prompt)

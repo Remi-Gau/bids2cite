@@ -14,16 +14,28 @@ license:
 funding:
   - National Institute of Neuroscience Grant F378236MFH1
   - National Institute of Neuroscience Grant 5RMZ0023106
+  - EU, EU.12345
+  - no
 references:
   - citation: 'Gau R, Noble S, Heuer K, Bottenhorn KL, Bilgin IP, et al.; Brainhack:
       Developing a culture of open, inclusive, community-driven neuroscience.; Neuron;
       2021; pmid:33932337'
     id: pmid:33932337
     reftype: IsSupplementTo
-  - citation: 'Rémi, Gau, Stephanie, Noble, Katja, Heuer, Katherine L., Bottenhorn,
-      Isil P., Bilgin, et al.; Brainhack: Developing a culture of open, inclusive,
-      community-driven neuroscience; Neuron; 2021; doi:10.1016/j.neuron.2021.04.001'
-    id: doi:10.1016/j.neuron.2021.04.001
+  - citation: 'César, Caballero-Gaudes, Stefano, Moia, Puja, Panwar, Peter A., Bandettini,
+      Javier, Gonzalez-Castillo, et al.; A deconvolution algorithm for multi-echo
+      functional MRI: Multi-echo Sparse Paradigm Free Mapping; NeuroImage; 2019; doi:10.1016/j.neuroimage.2019.116081'
+    id: doi:10.1016/j.neuroimage.2019.116081
+    reftype: IsSupplementTo
+  - citation: 'Ministerial Meeting on Population of the Non-Aligned Movement (1993:
+      Bali).; Denpasar Declaration on Population and Development.; Integration; 1994;
+      pmid:12345678'
+    id: pmid:12345678
+    reftype: IsSupplementTo
+  - citation: 'César, Caballero-Gaudes, Stefano, Moia, Puja, Panwar, Peter A., Bandettini,
+      Javier, Gonzalez-Castillo, et al.; A deconvolution algorithm for multi-echo
+      functional MRI: Multi-echo Sparse Paradigm Free Mapping; NeuroImage; 2019; doi:10.1016/j.neuroimage.2019.116081'
+    id: doi:10.1016/j.neuroimage.2019.116081
     reftype: IsSupplementTo
 resourcetype: Dataset
 templateversion: 1.2

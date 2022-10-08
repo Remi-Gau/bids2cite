@@ -11,14 +11,15 @@
     "HowToAcknowledge": "Please cite this paper: https://www.ncbi.nlm.nih.gov/pubmed/33932337",
     "Funding": [
         "National Institute of Neuroscience Grant F378236MFH1",
-        "National Institute of Neuroscience Grant 5RMZ0023106"
+        "National Institute of Neuroscience Grant 5RMZ0023106",
+        "EU, EU.12345"
     ],
     "EthicsApprovals": [
         "Army Human Research Protections Office (Protocol ARL-20098-10051, ARL 12-040, and ARL 12-041)"
     ],
     "ReferencesAndLinks": [
         "https://www.ncbi.nlm.nih.gov/pubmed/33932337",
-        "Alzheimer A., & Kraepelin, E. (2015). Neural correlates of presenile dementia in humans. Journal of Neuroscientific Data, 2, 234001. doi:10.1016/j.neuron.2021.04.001"
+        "doi:10.1016/j.neuroimage.2019.116081"
     ],
     "DatasetDOI": "doi:10.0.2.3/dfjj.10",
     "HEDVersion": "8.0.0",
