@@ -403,6 +403,7 @@ def main(bids_dir, description=None, keywords=None, skip_prompt=False):
     datacite = update_description(datacite, description)
 
     if "Authors" in ds_descr:
+        print_unordered_list(msg="Current authors:", items=ds_descr["Authors"])
         for author in ds_descr["Authors"]:
             firstname = author.split(" ")[0]
             lastname = " ".join(author.split(" ")[1:])
