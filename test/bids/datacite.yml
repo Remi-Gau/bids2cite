@@ -4,10 +4,10 @@ authors:
   - firstname: Carl
     lastname: Wernicke
 title: The mother of all experiments
-description: fgezrrt
+description: test
 keywords:
-  - zera
-  - fertzer
+  - foo
+  - bar
 license:
   name: Creative Commons Zero v1.0 Universal Public Domain Dedication
   url: https://creativecommons.org/publicdomain/zero/1.0/
@@ -17,13 +17,13 @@ funding:
 references:
   - citation: 'Gau R, Noble S, Heuer K, Bottenhorn KL, Bilgin IP, et al.; Brainhack:
       Developing a culture of open, inclusive, community-driven neuroscience.; Neuron;
-      2021'
-    reftype: IsSupplementTo
+      2021; pmid:33932337'
     id: pmid:33932337
+    reftype: IsSupplementTo
   - citation: 'Rémi, Gau, Stephanie, Noble, Katja, Heuer, Katherine L., Bottenhorn,
       Isil P., Bilgin, et al.; Brainhack: Developing a culture of open, inclusive,
-      community-driven neuroscience; Neuron; 2021'
-    reftype: IsSupplementTo
+      community-driven neuroscience; Neuron; 2021; doi:10.1016/j.neuron.2021.04.001'
     id: doi:10.1016/j.neuron.2021.04.001
+    reftype: IsSupplementTo
 resourcetype: Dataset
 templateversion: 1.2
