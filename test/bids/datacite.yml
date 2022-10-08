@@ -4,7 +4,7 @@ authors:
   - firstname: Carl
     lastname: Wernicke
 title: The mother of all experiments
-description: test
+description: gtjeklmrtjkelpm
 keywords:
   - foo
   - bar
@@ -27,8 +27,13 @@ references:
     id: doi:10.1016/j.neuroimage.2019.116081
     reftype: IsSupplementTo
   - citation: 'Ministerial Meeting on Population of the Non-Aligned Movement (1993:
-      Bali).; Denpasar Declaration on Population and Development.; Integration; 1994;
-      pmid:12345678'
+      Bali).; Denpasar Declaration on Population and Development.; Integration (Tokyo,
+      Japan); 1994; pmid:12345678'
+    id: pmid:12345678
+    reftype: IsSupplementTo
+  - citation: 'Ministerial Meeting on Population of the Non-Aligned Movement (1993:
+      Bali).; Denpasar Declaration on Population and Development.; Integration (Tokyo,
+      Japan); 1994; pmid:12345678'
     id: pmid:12345678
     reftype: IsSupplementTo
 resourcetype: Dataset

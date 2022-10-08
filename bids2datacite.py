@@ -6,13 +6,17 @@ details on the format of datacite for GIN: https://gin.g-node.org/G-Node/Info/wi
 import json
 from pathlib import Path
 
+import logging
+
 import crossref_commons.retrieval
 import requests
 import ruamel.yaml
 from rich import print
 from rich.prompt import Prompt
+from rich.logging import RichHandler
+from rich.traceback import install
 
-description = "test"
+description = ""
 keywords = ["foo", "bar"]
 
 skip_prompt = False
@@ -20,8 +24,37 @@ skip_prompt = False
 bids_dir = Path(__file__).parent.joinpath("test", "bids")
 
 
+log = logging.getLogger("bids2datacite")
+
+
+def bids2datacite_log(name=None):
+    """Create log.
+
+    :param name: _description_, defaults to None
+    :type name: _type_, optional
+
+    :return: _description_
+    :rtype: _type_
+    """
+    # let rich print the traceback
+    install(show_locals=True)
+
+    FORMAT = "bids2datacite - %(asctime)s - %(levelname)s - %(message)s"
+
+    log_level = "INFO"
+
+    if not name:
+        name = "rich"
+
+    logging.basicConfig(
+        level=log_level, format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
+    )
+
+    return logging.getLogger(name)
+
+
 def update_bidsignore(bids_dir: Path) -> None:
-    """update bidsignore file to ignore datacite.yml"""
+    log.info("updating/creating .bidsignore file to ignore datacite.yml")
     bidsignore = bids_dir.joinpath(".bidsignore")
     if not bidsignore.exists():
         with bidsignore.open("w") as f:
@@ -38,18 +71,30 @@ def prompt_format(msg: str) -> str:
     return f"[bold]{msg}[/bold]"
 
 
-def update_description(datacite: dict) -> dict:
+def print_unordered_list(msg: str, items: list) -> None:
+    print(f"\n[underline]{msg}[/underline]")
+    for i, item in enumerate(items):
+        print(f"\t{i+1}. [bold][white]{item}[/white][/bold]")
+    print()
+
+
+def update_description(datacite: dict, description) -> dict:
+    log.info("update description")
     if description not in [None, ""]:
         datacite["description"] = description
     else:
         datacite["description"] = Prompt.ask(
-            prompt_format("Please enter a description for the dataset")
+            prompt_format("\nPlease enter a description for the dataset")
         )
+        print()
     return datacite
 
 
 def add_license_file(license_type: str, bids_dir: Path) -> None:
+
     license_file = bids_dir.joinpath("LICENSE")
+
+    log.info(f"creating {license_file}")
 
     if license_type == "CC0":
         url = "https://api.github.com/licenses/cc0-1.0"
@@ -61,10 +106,12 @@ def add_license_file(license_type: str, bids_dir: Path) -> None:
 
 def update_keywords(keywords: list) -> list:
 
+    log.info("updating keywords")
+
     if not skip_prompt:
         add_keyword = "yes"
         while add_keyword == "yes":
-            print(f"Current keywords: {keywords}")
+            print_unordered_list(msg="Current keywords:", items=keywords)
             add_keyword = Prompt.ask(
                 prompt_format("Do you want to add more keywords?"),
                 default="yes",
@@ -79,6 +126,8 @@ def update_keywords(keywords: list) -> list:
 
 
 def update_license(datacite: dict, ds_descr: dict):
+
+    log.info("update license")
 
     license_file_present = "LICENSE" in bids_dir.glob("LICENSE*")
 
@@ -121,6 +170,7 @@ Please add a license that matches that of the dataset_description.json file.[/re
                 default="yes",
                 choices=["yes", "no"],
             )
+            print()
             if add_license == "yes":
                 print(
                     """Possible licences:
@@ -142,6 +192,8 @@ Please add a license that matches that of the dataset_description.json file.[/re
 
 def update_funding(ds_descr: dict, skip_prompt: bool = False) -> dict:
 
+    log.info("update funding")
+
     funding = []
     if "Funding" in ds_descr and ds_descr["Funding"] not in [None, []]:
         funding = ds_descr["Funding"]
@@ -151,15 +203,13 @@ def update_funding(ds_descr: dict, skip_prompt: bool = False) -> dict:
 
     add_funding = "yes"
     while add_funding == "yes":
-        print("Current fundings")
-        for i, grant in enumerate(funding):
-            print(f"{i+1}. {grant}")
-
+        print_unordered_list(msg="Current fundings:", items=funding)
         add_funding = Prompt.ask(
             prompt_format("Do you want to add more funding?"),
             default="yes",
             choices=["yes", "no"],
         )
+        print()
         if add_funding != "yes":
             break
 
@@ -173,7 +223,7 @@ def update_funding(ds_descr: dict, skip_prompt: bool = False) -> dict:
 def get_article_id(reference):
     """Find the article DOI or PMID"""
 
-    article_id = None
+    article_id = ""
 
     if "pmid:" in reference:
         pmid = reference.split("pmid:")[1]
@@ -189,12 +239,17 @@ def get_article_id(reference):
         doi = reference.split("https://doi.org/")[1]
         article_id = f"doi:{doi}"
 
+    else:
+        log.warning(f"No PMID or DOI found in:\n{reference}")
+
     return article_id
 
 
 def get_reference_details(reference):
 
     this_reference = {"citation": reference}
+
+    article_info = None
 
     article_id = get_article_id(reference)
     if article_id.startswith("pmid"):
@@ -215,6 +270,8 @@ def get_reference_details(reference):
 
 def update_references(ds_descr: dict, skip_prompt: bool = False) -> list:
 
+    log.info("update references")
+
     references = []
 
     if "ReferencesAndLinks" in ds_descr:
@@ -227,28 +284,33 @@ def update_references(ds_descr: dict, skip_prompt: bool = False) -> list:
     if skip_prompt:
         return references
 
+    items = [x["citation"] for x in references]
+    print_unordered_list(msg="Current references:", items=items)
+
     add_references = "yes"
     while add_references == "yes":
-        print("Current references")
-        for i, ref in enumerate(references):
-            print(f"{i+1}. [blue][bold]{ref['citation']}[/bold][/blue]")
 
         add_funding = Prompt.ask(
             prompt_format("Do you want to add more references?"),
             default="yes",
             choices=["yes", "no"],
         )
-        if add_funding == "yes":
-            reference = Prompt.ask(
-                prompt_format(
-                    """Please enter a references
-(for example: 'doi:10.1016/j.neuroimage.2019.116081' or 'pmid:12345678')"""
-                )
-            )
-            this_reference = get_reference_details(reference)
-            references.append(this_reference)
-        else:
+        print()
+        if add_funding != "yes":
             break
+
+        reference = Prompt.ask(
+            prompt_format(
+                """Please enter a references
+(for example: 'doi:10.1016/j.neuroimage.2019.116081' or 'pmid:12345678')"""
+            )
+        )
+        this_reference = get_reference_details(reference)
+        
+        if "id" in this_reference:
+            references.append(this_reference)
+            items = [x["citation"] for x in references]
+            print_unordered_list(msg="Current references:", items=items)
 
     return references
 
@@ -269,6 +331,7 @@ def get_article_info_from_doi(doi: str):
         "journal": content["short-container-title"][0],
         "year": content["created"]["date-parts"][0][0],
         "authors": authors,
+        "doi": content["DOI"],
     }
 
 
@@ -280,7 +343,12 @@ def get_article_info_from_pmid(pmid: str):
 
     if response.status_code == 200:
 
-        content = response.json()["result"][pmid]
+        content = response.json()["result"]
+        if pmid in content:
+            content = content[pmid]
+        else:
+            print(f"[red]No article matching pmid:{pmid}[/red]")
+            return None
 
         authors = []
         for i, author in enumerate(content["authors"]):
@@ -289,15 +357,27 @@ def get_article_info_from_pmid(pmid: str):
                 authors.append("et al.")
                 break
 
+        for x in content["articleids"]: 
+            if x["idtype"] == "doi":
+                doi  = x["value"]  
+
         return {
             "title": content["title"],
-            "journal": content["source"],
+            "journal": content["fulljournalname"],
             "year": content["pubdate"].split(" ")[0],
             "authors": authors,
+            "doi": doi,
         }
+    else:
+        log.warning(f"No article matching pmid:{pmid}")
+        return None
 
 
-def main(keywords):
+def main(bids_dir, description=None, keywords=None, skip_prompt=False):
+
+    log = bids2datacite_log(name="bids2datacite")
+
+    log.info(f"bids_dir: {bids_dir}")
 
     ds_descr_file = bids_dir.joinpath("dataset_description.json")
     datacite_file = bids_dir.joinpath("datacite.yml")
@@ -320,7 +400,7 @@ def main(keywords):
         "templateversion": 1.2,
     }
 
-    datacite = update_description(datacite)
+    datacite = update_description(datacite, description)
 
     if "Authors" in ds_descr:
         for author in ds_descr["Authors"]:
@@ -342,9 +422,11 @@ def main(keywords):
     keywords = update_keywords(keywords)
     datacite["keywords"] = keywords
 
+    log.info(f"writing {datacite_file}")
     with open(datacite_file, "w") as f:
         yaml.dump(datacite, f)
 
+    log.info(f"updating {ds_descr_file}")
     with open(ds_descr_file, "w") as f:
         json.dump(ds_descr, f, indent=4)
 
@@ -352,4 +434,9 @@ def main(keywords):
 
 
 if __name__ == "__main__":
-    main(keywords)
+    main(
+        bids_dir=bids_dir,
+        description=description,
+        keywords=keywords,
+        skip_prompt=skip_prompt,
+    )
