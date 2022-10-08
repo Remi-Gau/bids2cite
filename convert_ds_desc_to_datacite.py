@@ -93,8 +93,9 @@ def main():
                 this_reference["id"] = f"doi::{doi}"
                 article_info = crossref_commons.retrieval.get_publication_as_json(doi)
             
-
-            print(article_info)
+            if article_info is not None:
+                this_reference["citation"]: article_info["title"][0]
+                # print(article_info)
 
             datacite["references"].append(this_reference)
 
