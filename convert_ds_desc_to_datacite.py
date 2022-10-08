@@ -8,8 +8,7 @@ from pathlib import Path
 import crossref_commons.retrieval
 import requests
 import ruamel.yaml
-from rich import print
-
+from rich import print, Prompt
 
 description = "Example description."
 
@@ -20,6 +19,10 @@ output_dir = Path(__file__).parent
 ds_descr_file = Path(__file__).parent.joinpath(
     "test", "data", "dataset_description.json"
 )
+
+
+def prompt_format(msg):
+    return f"[bold][underline]{msg}[/bold][/underline]"
 
 
 def get_article_info_from_pmid(pmid):
@@ -113,7 +116,7 @@ def main():
                         break
 
             if article_info is not None:
-                print(article_info)                    
+                print(article_info)
 
             if doi is not None or pmid is not None:
                 this_reference[
@@ -128,6 +131,8 @@ def main():
 
     if description not in [None, ""]:
         datacite["description"] = description
+    else:
+        Prompt.ask(prompt_format("Please enter a description for the dataset"))
 
     if keywords not in [None, []]:
         for word in keywords:
