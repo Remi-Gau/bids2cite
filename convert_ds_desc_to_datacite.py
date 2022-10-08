@@ -205,9 +205,6 @@ def main():
                         authors.append("et al.")
                         break
 
-            # if article_info is not None:
-            #     print(article_info)
-
             if doi is not None or pmid is not None:
                 this_reference[
                     "citation"
@@ -217,7 +214,8 @@ def main():
 
     if "Funding" in ds_descr:
         for grant in ds_descr["Funding"]:
-            datacite["funding"].append(grant)
+            if grant not in datacite["funding"]:
+                datacite["funding"].append(grant)
 
     (datacite, ds_descr) = update_license(datacite, ds_descr)
 
