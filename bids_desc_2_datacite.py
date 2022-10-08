@@ -183,7 +183,9 @@ def update_references(ds_descr: dict) -> list:
             pmid = None
             doi = None
 
-            if "www.ncbi.nlm.nih.gov/pubmed/" in reference:
+            if "pmid:" in reference:
+                pmid = reference.split("pmid:")[1]
+            elif "www.ncbi.nlm.nih.gov/pubmed/" in reference:
                 pmid = reference.split("www.ncbi.nlm.nih.gov/pubmed/")[1]
             if pmid is not None:
                 article_info = get_article_info_from_pmid(pmid)
@@ -199,7 +201,11 @@ def update_references(ds_descr: dict) -> list:
                 this_reference["id"] = article_info["id"]
                 this_reference[
                     "citation"
-                ] = f"{', '.join(article_info['authors'])}; {article_info['title']}; {article_info['journal']}; {article_info['year']}; {article_info['id']}"
+                ] = f"""{', '.join(article_info['authors'])}; 
+{article_info['title']}; 
+{article_info['journal']}; 
+{article_info['year']}; 
+{article_info['id']}"""
 
             this_reference["reftype"] = "IsSupplementTo"
 
