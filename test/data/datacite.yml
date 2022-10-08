@@ -24,10 +24,7 @@ authors:
 title: "Example Title"
 
 # Additional information about the resource, e.g., a brief abstract.
-description: |
-  Example description
-  that can contain linebreaks
-  but has to maintain indentation.
+description: Example description.
 
 # Lit of keywords the resource should be associated with.
 # Give as many keywords as possible, to make the resource findable.

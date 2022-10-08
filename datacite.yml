@@ -4,7 +4,7 @@ authors:
   - firstname: Carl
     lastname: Wernicke
 title: The mother of all experiments
-description: Example description that can contain linebreaks but has to maintain indentation.
+description: Example description.
 keywords:
   - Neuroscience
   - Keyword2
@@ -16,12 +16,15 @@ funding:
   - National Institute of Neuroscience Grant F378236MFH1
   - National Institute of Neuroscience Grant 5RMZ0023106
 references:
-  - citation: https://www.ncbi.nlm.nih.gov/pubmed/33932337
+  - citation: 'Gau R, Noble S, Heuer K, Bottenhorn KL, Bilgin IP, et al.; Brainhack:
+      Developing a culture of open, inclusive, community-driven neuroscience.; Neuron;
+      2021'
     reftype: IsSupplementTo
     id: pmid:33932337
-  - citation: Alzheimer A., & Kraepelin, E. (2015). Neural correlates of presenile
-      dementia in humans. Journal of Neuroscientific Data, 2, 234001. doi:10.1016/j.neuron.2021.04.001
+  - citation: 'Rémi, Gau, Stephanie, Noble, Katja, Heuer, Katherine L., Bottenhorn,
+      Isil P., Bilgin, et al.; Brainhack: Developing a culture of open, inclusive,
+      community-driven neuroscience; Neuron; 2021'
     reftype: IsSupplementTo
-    id: doi::10.1016/j.neuron.2021.04.001
+    id: doi:10.1016/j.neuron.2021.04.001
 resourcetype: Dataset
 templateversion: 1.2

@@ -10,9 +10,8 @@ import requests
 import ruamel.yaml
 from rich import print
 
-description = (
-    "Example description that can contain linebreaks but has to maintain indentation."
-)
+
+description = "Example description."
 
 keywords = ["Neuroscience", "Keyword2", "Keyword3"]
 
@@ -28,7 +27,7 @@ def get_article_info_from_pmid(pmid):
     url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id={pmid}&retmode=json"
     response = requests.get(url)
     if response.status_code == 200:
-        return response.json()
+        return response.json()["result"][pmid]
 
 
 def main():
@@ -79,23 +78,47 @@ def main():
             this_reference = {"citation": reference, "reftype": "IsSupplementTo"}
 
             article_info = None
+            pmid = None
+            doi = None
 
             if "www.ncbi.nlm.nih.gov/pubmed/" in reference:
                 pmid = reference.split("www.ncbi.nlm.nih.gov/pubmed/")[1]
                 this_reference["id"] = f"pmid:{pmid}"
                 article_info = get_article_info_from_pmid(pmid)
+                title = article_info["title"]
+                journal = article_info["source"]
+                year = article_info["pubdate"].split(" ")[0]
+                authors = []
+                for i, author in enumerate(article_info["authors"]):
+                    authors.append(f"{author['name']}")
+                    if i > 3:
+                        authors.append("et al.")
+                        break
+
             elif "doi:" in reference:
                 doi = reference.split("doi:")[1]
-                this_reference["id"] = f"doi::{doi}"
-                article_info = crossref_commons.retrieval.get_publication_as_json(doi)
             elif "https://doi.org/:" in reference:
                 doi = reference.split("https://doi.org/")[1]
-                this_reference["id"] = f"doi::{doi}"
+            if doi is not None:
+                this_reference["id"] = f"doi:{doi}"
                 article_info = crossref_commons.retrieval.get_publication_as_json(doi)
-            
+                title = article_info["title"][0]
+                journal = article_info["short-container-title"][0]
+                year = article_info["created"]["date-parts"][0][0]
+                authors = []
+                for i, author in enumerate(article_info["author"]):
+                    authors.append(f"{author['given']}, {author['family']}")
+                    if i > 3:
+                        authors.append("et al.")
+                        break
+
             if article_info is not None:
-                this_reference["citation"]: article_info["title"][0]
-                # print(article_info)
+                print(article_info)                    
+
+            if doi is not None or pmid is not None:
+                this_reference[
+                    "citation"
+                ] = f"{', '.join(authors)}; {title}; {journal}; {year}"
 
             datacite["references"].append(this_reference)
 
