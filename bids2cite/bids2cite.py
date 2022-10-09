@@ -146,11 +146,20 @@ def bids2cite(argv=sys.argv):
 
     args = parser.parse_args(argv[1:])
 
+    skip_prompt = False
+    if args.skip_prompt == "true":
+        skip_prompt = True
+
+    log.setLevel(args.verbosity)
+
+    tmp = args.keywords.split(",") if args.keywords else []
+    keywords = [x.strip() for x in tmp]
+
     main(
         bids_dir=Path(args.bids_dir).resolve(),
         description=args.description,
-        keywords=args.keywords,
-        skip_prompt=args.skip_prompt,
+        keywords=keywords,
+        skip_prompt=skip_prompt,
     )
 
 
@@ -160,9 +169,6 @@ def main(
     keywords: list = None,
     skip_prompt: bool = False,
 ):
-
-    # bids_dir, description=None, keywords=None, skip_prompt=False
-    # argv=sys.argv
 
     log = bids2cite_log(name="bids2datacite")
 
@@ -243,7 +249,7 @@ def common_parser() -> MuhParser:
         """,
     )
     parser.add_argument(
-        "--description", help="Description to add to the dataset.", default="INFO"
+        "--description", help="Description to add to the dataset.", default=""
     )
     parser.add_argument(
         "--keywords",
@@ -251,16 +257,16 @@ def common_parser() -> MuhParser:
         default="",
     )
     parser.add_argument(
-        "--skip_prompt",
+        "--skip-prompt",
         help="If you want to not use the prompt interface.",
         choices=["true", "false"],
         default="false",
     )
     parser.add_argument(
-        "--verbosity", help="INFO, WARNING.", choices=["INFO", "WARNING"], default="INFO"
-    )
-    parser.add_argument(
-        "--debug", help="true or false.", choices=["true", "false"], default="false"
+        "--verbosity",
+        help="DEUG, INFO, WARNING",
+        choices=["DEBUG", "INFO", "WARNING"],
+        default="INFO",
     )
     parser.add_argument(
         "--version",

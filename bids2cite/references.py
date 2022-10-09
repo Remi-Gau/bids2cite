@@ -53,9 +53,7 @@ def get_reference_details(reference):
         this_reference["id"] = ref_id
         this_reference[
             "citation"
-        ] = f"""
-{', '.join(info['authors'])}; {info['title']}; {info['journal']}; {info['year']}; {ref_id}
-"""
+        ] = f"""{', '.join(info['authors'])}; {info['title']}; {info['journal']}; {info['year']}; {ref_id}"""
 
     this_reference["reftype"] = "IsSupplementTo"
 
