@@ -31,7 +31,7 @@ make test-cli
 ## Usage
 
 ```bash
-bids2cite tests/bids \
+bids2cite path_to_bids_dataset \
     --skip-prompt false \
     --verbosity INFO \
     --keywords "foo, bar, me" \
