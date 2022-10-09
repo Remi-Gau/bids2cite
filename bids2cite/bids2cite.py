@@ -17,6 +17,7 @@ from . import _version
 
 __version__ = _version.get_versions()["version"]
 
+from bids2cite.authors import update_authors
 from bids2cite.license import update_license
 from bids2cite.references import update_references
 from bids2cite.utils import bids2cite_log, print_unordered_list, prompt_format
@@ -110,43 +111,6 @@ def update_funding(ds_desc: dict, skip_prompt: bool = False) -> List[str]:
     return funding
 
 
-def update_authors(ds_desc: dict, skip_prompt: bool = False):
-    authors = []
-    if "Authors" in ds_desc:
-        for author in ds_desc["Authors"]:
-            firstname = author.split(" ")[0]
-            lastname = " ".join(author.split(" ")[1:])
-            authors.append({"firstname": firstname, "lastname": lastname})
-
-    if skip_prompt:
-        return authors
-    print_unordered_list(msg="Current authors:", items=authors)
-
-    add_authors = "yes"
-    while add_authors == "yes":
-
-        add_funding = Prompt.ask(
-            prompt_format("Do you want to add more authors?"),
-            default="yes",
-            choices=["yes", "no"],
-        )
-        print()
-        if add_funding != "yes":
-            break
-
-        author = Prompt.ask(
-            prompt_format(
-                """Please enter a new author
-(for example: 'firstname surname' or 'ORCID:12345678')"""
-            )
-        )
-        firstname = author.split(" ")[0]
-        lastname = " ".join(author.split(" ")[1:])
-        authors.append({"firstname": firstname, "lastname": lastname})
-
-    return authors
-
-
 def bids2cite(argv=sys.argv):
 
     parser = common_parser()
@@ -204,10 +168,12 @@ def main(
 
     authors = update_authors(ds_desc, skip_prompt)
     datacite["authors"] = authors
+    tmp = [f"{x['firstname']} {x['lastname']}" for x in authors]
+    ds_desc["Authors"] = tmp
 
     references = update_references(ds_desc, skip_prompt)
     datacite["references"] = references
-    tmp = [ref["citation"] for ref in references]
+    tmp = [x["citation"] for x in references]
     ds_desc["ReferencesAndLinks"] = tmp
 
     funding = update_funding(ds_desc, skip_prompt)
