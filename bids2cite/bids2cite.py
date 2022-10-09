@@ -5,6 +5,7 @@ details on the format of datacite for GIN: https://gin.g-node.org/G-Node/Info/wi
 import argparse
 import json
 import logging
+import sys
 from pathlib import Path
 from typing import IO, Optional
 
@@ -26,7 +27,7 @@ log = logging.getLogger("bids2datacite")
 
 
 def update_bidsignore(bids_dir: Path) -> None:
-    log.info("updating/creating .bidsignore file to ignore datacite.yml")
+    log.info("updating .bidsignore")
     bidsignore = bids_dir.joinpath(".bidsignore")
     if not bidsignore.exists():
         with bidsignore.open("w") as f:
@@ -72,13 +73,13 @@ def update_keywords(keywords: list, skip_prompt) -> list:
     return keywords
 
 
-def update_funding(ds_descr: dict, skip_prompt: bool = False) -> dict:
+def update_funding(ds_desc: dict, skip_prompt: bool = False) -> dict:
 
     log.info("update funding")
 
     funding = []
-    if "Funding" in ds_descr and ds_descr["Funding"] not in [None, []]:
-        funding = ds_descr["Funding"]
+    if "Funding" in ds_desc and ds_desc["Funding"] not in [None, []]:
+        funding = ds_desc["Funding"]
 
     if skip_prompt:
         return funding
@@ -102,44 +103,16 @@ def update_funding(ds_descr: dict, skip_prompt: bool = False) -> dict:
     return funding
 
 
-def main(bids_dir, description=None, keywords=None, skip_prompt=False):
-
-    # bids_dir, description=None, keywords=None, skip_prompt=False
-    # argv=sys.argv
-
-    log = bids2cite_log(name="bids2datacite")
-
-    log.info(f"bids_dir: {bids_dir}")
-
-    ds_descr_file = bids_dir.joinpath("dataset_description.json")
-    datacite_file = bids_dir.joinpath("datacite.yml")
-
-    yaml = ruamel.yaml.YAML()
-    yaml.indent(mapping=2, sequence=4, offset=2)
-
-    with open(ds_descr_file, "r") as f:
-        ds_descr = json.load(f)
-
-    datacite = {
-        "authors": [],
-        "title": ds_descr["Name"],
-        "description": "",
-        "keywords": [],
-        "license": {"name": "", "url": ""},
-        "funding": [],
-        "references": [],
-        "resourcetype": "Dataset",
-        "templateversion": 1.2,
-    }
-
-    datacite = update_description(datacite, description, skip_prompt)
-
+def update_authors(ds_desc, skip_prompt):
     authors = []
-    if "Authors" in ds_descr:
-        for author in ds_descr["Authors"]:
+    if "Authors" in ds_desc:
+        for author in ds_desc["Authors"]:
             firstname = author.split(" ")[0]
             lastname = " ".join(author.split(" ")[1:])
             authors.append({"firstname": firstname, "lastname": lastname})
+
+    if skip_prompt:
+        return authors
     print_unordered_list(msg="Current authors:", items=authors)
 
     add_authors = "yes"
@@ -164,29 +137,84 @@ def main(bids_dir, description=None, keywords=None, skip_prompt=False):
         lastname = " ".join(author.split(" ")[1:])
         authors.append({"firstname": firstname, "lastname": lastname})
 
+    return authors
+
+
+def bids2cite(argv=sys.argv):
+
+    parser = common_parser()
+
+    args = parser.parse_args(argv[1:])
+
+    main(
+        bids_dir=Path(args.bids_dir).resolve(),
+        description=args.description,
+        keywords=args.keywords,
+        skip_prompt=args.skip_prompt,
+    )
+
+
+def main(
+    bids_dir: Path,
+    description: str = None,
+    keywords: list = None,
+    skip_prompt: bool = False,
+):
+
+    # bids_dir, description=None, keywords=None, skip_prompt=False
+    # argv=sys.argv
+
+    log = bids2cite_log(name="bids2datacite")
+
+    log.info(f"bids_dir: {bids_dir}")
+
+    ds_descr_file = bids_dir.joinpath("dataset_description.json")
+    datacite_file = bids_dir.joinpath("datacite.yml")
+
+    yaml = ruamel.yaml.YAML()
+    yaml.indent(mapping=2, sequence=4, offset=2)
+
+    with open(ds_descr_file, "r") as f:
+        ds_desc = json.load(f)
+
+    datacite = {
+        "authors": [],
+        "title": ds_desc["Name"],
+        "description": "",
+        "keywords": [],
+        "license": {"name": "", "url": ""},
+        "funding": [],
+        "references": [],
+        "resourcetype": "Dataset",
+        "templateversion": 1.2,
+    }
+
+    datacite = update_description(datacite, description, skip_prompt)
+
+    authors = update_authors(ds_desc, skip_prompt)
     datacite["authors"] = authors
 
-    references = update_references(ds_descr, skip_prompt)
+    references = update_references(ds_desc, skip_prompt)
     datacite["references"] = references
     tmp = [ref["citation"] for ref in references]
-    ds_descr["ReferencesAndLinks"] = tmp
+    ds_desc["ReferencesAndLinks"] = tmp
 
-    funding = update_funding(ds_descr, skip_prompt)
+    funding = update_funding(ds_desc, skip_prompt)
     datacite["funding"] = funding
-    ds_descr["Funding"] = funding
+    ds_desc["Funding"] = funding
 
-    (datacite, ds_descr) = update_license(bids_dir, datacite, ds_descr, skip_prompt)
+    (datacite, ds_desc) = update_license(bids_dir, datacite, ds_desc, skip_prompt)
 
     keywords = update_keywords(keywords, skip_prompt)
     datacite["keywords"] = keywords
 
-    log.info(f"writing {datacite_file}")
+    log.info(f"creating {datacite_file}")
     with open(datacite_file, "w") as f:
         yaml.dump(datacite, f)
 
     log.info(f"updating {ds_descr_file}")
     with open(ds_descr_file, "w") as f:
-        json.dump(ds_descr, f, indent=4)
+        json.dump(ds_desc, f, indent=4)
 
     update_bidsignore(bids_dir)
 

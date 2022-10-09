@@ -25,16 +25,16 @@ def add_license_file(license_type: str, bids_dir: Path) -> None:
 
 
 def update_license(
-    bids_dir: Path, datacite: dict, ds_descr: dict, skip_prompt: bool = False
+    bids_dir: Path, datacite: dict, ds_desc: dict, skip_prompt: bool = False
 ):
 
     log.info("update license")
 
     license_file_present = "LICENSE" in bids_dir.glob("LICENSE*")
 
-    if "License" in ds_descr and ds_descr["License"] not in [None, ""]:
+    if "License" in ds_desc and ds_desc["License"] not in [None, ""]:
 
-        license_name = ds_descr["License"]
+        license_name = ds_desc["License"]
         license_url = ""
 
         if license_name in ["CC0", "cc0-1.0"]:
@@ -60,7 +60,7 @@ Please add a license that matches that of the dataset_description.json file.[/re
 """
             )
 
-        return datacite, ds_descr
+        return datacite, ds_desc
 
     if not license_file_present:
 
@@ -85,7 +85,7 @@ Please add a license that matches that of the dataset_description.json file.[/re
                 )
                 if license == "1":
                     add_license_file("CC0", bids_dir)
-                    ds_descr["License"] = "CC0"
-                    (datacite, ds_descr) = update_license(datacite, ds_descr, skip_prompt)
+                    ds_desc["License"] = "CC0"
+                    (datacite, ds_desc) = update_license(datacite, ds_desc, skip_prompt)
 
-        return datacite, ds_descr
+        return datacite, ds_desc

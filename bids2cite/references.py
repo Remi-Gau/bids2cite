@@ -29,8 +29,10 @@ def get_reference_id(reference):
         doi = reference.split("https://doi.org/")[1]
         ref_id = f"doi:{doi}"
 
-    else:
+    if ref_id == "":
         log.warning(f"No PMID or DOI found in:\n{reference}")
+
+    ref_id = ref_id.strip()
 
     return ref_id
 
@@ -60,14 +62,14 @@ def get_reference_details(reference):
     return this_reference
 
 
-def update_references(ds_descr: dict, skip_prompt: bool = False) -> list:
+def update_references(ds_desc: dict, skip_prompt: bool = False) -> list:
 
     log.info("update references")
 
     references = []
 
-    if "ReferencesAndLinks" in ds_descr:
-        for reference in ds_descr["ReferencesAndLinks"]:
+    if "ReferencesAndLinks" in ds_desc:
+        for reference in ds_desc["ReferencesAndLinks"]:
 
             this_reference = get_reference_details(reference)
 
@@ -129,10 +131,10 @@ def get_reference_info_from_doi(doi: str):
 
 def get_reference_info_from_pmid(pmid: str):
 
-    url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi"
-    queries = f"?db=pubmed&id={pmid}&retmode=json"
+    base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi"
+    url = f"{base_url}?db=pubmed&id={pmid}&retmode=json"
 
-    response = requests.get(f"{url}{queries}")
+    response = requests.get(url)
 
     if response.status_code == 200:
 
@@ -140,7 +142,7 @@ def get_reference_info_from_pmid(pmid: str):
         if pmid in content:
             content = content[pmid]
         else:
-            print(f"[red]No reference matching pmid:{pmid}[/red]")
+            log.warning(f"No reference matching pmid:{pmid} at url {url}")
             return None
 
         authors = []
