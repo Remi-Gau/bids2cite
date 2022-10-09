@@ -9,14 +9,7 @@ Create a citation file for a BIDS dataset.
 
 Can also be used to update references, authors and add license to a dataset.
 
-<iframe
-width="560"
-height="315"
-src="https://www.youtube.com/embed/BXSW5KGoQRY"
-title="YouTube video player"
-frameborder="0"
-allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
-</iframe>
+[![demo](./images/demo.png)](https://www.youtube.com/embed/BXSW5KGoQRY)
 
 ## Installation
 
