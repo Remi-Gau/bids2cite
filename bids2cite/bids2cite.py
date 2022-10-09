@@ -82,8 +82,15 @@ def update_keywords(
             )
             if add_keyword != "yes":
                 break
-            keyword = Prompt.ask(prompt_format("Please enter a keyword"))
-            keywords.append(keyword)
+            new_keywords = Prompt.ask(
+                prompt_format(
+                    """Please enter keywords separated by comma
+(for example: 'keyword1, keyword2')"""
+                )
+            )
+            new_keywords = new_keywords.strip().split(",")
+            for keyword in new_keywords:
+                keywords.append(keyword.strip())
 
     return keywords
 
@@ -120,6 +127,9 @@ def update_funding(ds_desc: dict, skip_prompt: bool = False) -> List[str]:
 
 def bids2cite(argv=sys.argv):
     """Execute the main script for CLI."""
+
+    log = bids2cite_log(name="bids2datacite")
+
     parser = common_parser()
 
     args = parser.parse_args(argv[1:])
@@ -260,6 +270,7 @@ def common_parser() -> MuhParser:
                     - last_name\n
                     - ORCID (optional)\n
                     - affiliation (optional)""",
+        default="",
     )
     parser.add_argument(
         "--verbosity",
