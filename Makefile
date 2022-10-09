@@ -47,6 +47,9 @@ clean-test: ## remove test and coverage artifacts
 	rm -f .coverage
 	rm -fr htmlcov/
 	rm -fr .pytest_cache
+	rm tests/bids/.bidsignore
+	rm tests/bids/datacite.yml
+	rm tests/bids/LICENSE
 
 ## INSTALL
 
@@ -101,3 +104,11 @@ test-html:
 	python -m pytest --cov-config=.coveragerc \
 			--cov=bids2cite \
 			--cov-report html \
+
+test-cli:
+	bids2cite tests/bids \
+		--skip-prompt true \
+		--verbosity DEBUG \
+		--keywords "foo, bar, me" \
+		--description "this is the description of my dataset"
+	make clean-test
