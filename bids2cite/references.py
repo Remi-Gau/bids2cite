@@ -5,7 +5,7 @@ import requests
 from rich import print
 from rich.prompt import Prompt
 
-from utils import print_unordered_list, prompt_format
+from bids2cite.utils import print_unordered_list, prompt_format
 
 log = logging.getLogger("bids2datacite")
 
