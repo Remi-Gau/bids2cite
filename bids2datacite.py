@@ -8,7 +8,6 @@ from pathlib import Path
 
 import logging
 
-import crossref_commons.retrieval
 import requests
 import ruamel.yaml
 from rich import print
@@ -16,12 +15,16 @@ from rich.prompt import Prompt
 from rich.logging import RichHandler
 from rich.traceback import install
 
+from references import update_references
+
+from utils import prompt_format, print_unordered_list
+
 description = ""
 keywords = ["foo", "bar"]
 
 skip_prompt = False
 
-bids_dir = Path(__file__).parent.joinpath("test", "bids")
+bids_dir = Path(__file__).parent.joinpath("tests", "bids")
 
 
 log = logging.getLogger("bids2datacite")
@@ -65,18 +68,6 @@ def update_bidsignore(bids_dir: Path) -> None:
         if "datacite.yml" not in content:
             with bidsignore.open("a") as f:
                 f.write("datacite.yml")
-
-
-def prompt_format(msg: str) -> str:
-    return f"[bold]{msg}[/bold]"
-
-
-def print_unordered_list(msg: str, items: list) -> None:
-    print(f"\n[underline]{msg}[/underline]")
-    for i, item in enumerate(items):
-        print(f"\t{i+1}. [bold][white]{item}[/white][/bold]")
-    print()
-
 
 def update_description(datacite: dict, description) -> dict:
     log.info("update description")
@@ -220,159 +211,6 @@ def update_funding(ds_descr: dict, skip_prompt: bool = False) -> dict:
     return funding
 
 
-def get_article_id(reference):
-    """Find the article DOI or PMID"""
-
-    article_id = ""
-
-    if "pmid:" in reference:
-        pmid = reference.split("pmid:")[1]
-        article_id = f"pmid:{pmid}"
-    elif "www.ncbi.nlm.nih.gov/pubmed/" in reference:
-        pmid = reference.split("www.ncbi.nlm.nih.gov/pubmed/")[1]
-        article_id = f"pmid:{pmid}"
-
-    elif "doi:" in reference:
-        doi = reference.split("doi:")[1]
-        article_id = f"doi:{doi}"
-    elif "https://doi.org/:" in reference:
-        doi = reference.split("https://doi.org/")[1]
-        article_id = f"doi:{doi}"
-
-    else:
-        log.warning(f"No PMID or DOI found in:\n{reference}")
-
-    return article_id
-
-
-def get_reference_details(reference):
-
-    this_reference = {"citation": reference}
-
-    article_info = None
-
-    article_id = get_article_id(reference)
-    if article_id.startswith("pmid"):
-        article_info = get_article_info_from_pmid(article_id.split("pmid:")[1])
-    elif article_id.startswith("doi"):
-        article_info = get_article_info_from_doi(article_id.split("doi:")[1])
-
-    if article_info is not None:
-        this_reference["id"] = article_id
-        this_reference[
-            "citation"
-        ] = f"{', '.join(article_info['authors'])}; {article_info['title']}; {article_info['journal']}; {article_info['year']}; {article_id}"
-
-    this_reference["reftype"] = "IsSupplementTo"
-
-    return this_reference
-
-
-def update_references(ds_descr: dict, skip_prompt: bool = False) -> list:
-
-    log.info("update references")
-
-    references = []
-
-    if "ReferencesAndLinks" in ds_descr:
-        for reference in ds_descr["ReferencesAndLinks"]:
-
-            this_reference = get_reference_details(reference)
-
-            references.append(this_reference)
-
-    if skip_prompt:
-        return references
-
-    items = [x["citation"] for x in references]
-    print_unordered_list(msg="Current references:", items=items)
-
-    add_references = "yes"
-    while add_references == "yes":
-
-        add_funding = Prompt.ask(
-            prompt_format("Do you want to add more references?"),
-            default="yes",
-            choices=["yes", "no"],
-        )
-        print()
-        if add_funding != "yes":
-            break
-
-        reference = Prompt.ask(
-            prompt_format(
-                """Please enter a references
-(for example: 'doi:10.1016/j.neuroimage.2019.116081' or 'pmid:12345678')"""
-            )
-        )
-        this_reference = get_reference_details(reference)
-        
-        if "id" in this_reference:
-            references.append(this_reference)
-            items = [x["citation"] for x in references]
-            print_unordered_list(msg="Current references:", items=items)
-
-    return references
-
-
-def get_article_info_from_doi(doi: str):
-
-    content = crossref_commons.retrieval.get_publication_as_json(doi)
-
-    authors = []
-    for i, author in enumerate(content["author"]):
-        authors.append(f"{author['given']}, {author['family']}")
-        if i > 3:
-            authors.append("et al.")
-            break
-
-    return {
-        "title": content["title"][0],
-        "journal": content["short-container-title"][0],
-        "year": content["created"]["date-parts"][0][0],
-        "authors": authors,
-        "doi": content["DOI"],
-    }
-
-
-def get_article_info_from_pmid(pmid: str):
-
-    url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id={pmid}&retmode=json"
-
-    response = requests.get(url)
-
-    if response.status_code == 200:
-
-        content = response.json()["result"]
-        if pmid in content:
-            content = content[pmid]
-        else:
-            print(f"[red]No article matching pmid:{pmid}[/red]")
-            return None
-
-        authors = []
-        for i, author in enumerate(content["authors"]):
-            authors.append(f"{author['name']}")
-            if i > 3:
-                authors.append("et al.")
-                break
-
-        for x in content["articleids"]: 
-            if x["idtype"] == "doi":
-                doi  = x["value"]  
-
-        return {
-            "title": content["title"],
-            "journal": content["fulljournalname"],
-            "year": content["pubdate"].split(" ")[0],
-            "authors": authors,
-            "doi": doi,
-        }
-    else:
-        log.warning(f"No article matching pmid:{pmid}")
-        return None
-
-
 def main(bids_dir, description=None, keywords=None, skip_prompt=False):
 
     log = bids2datacite_log(name="bids2datacite")
@@ -402,12 +240,37 @@ def main(bids_dir, description=None, keywords=None, skip_prompt=False):
 
     datacite = update_description(datacite, description)
 
+    authors = []
     if "Authors" in ds_descr:
-        print_unordered_list(msg="Current authors:", items=ds_descr["Authors"])
         for author in ds_descr["Authors"]:
             firstname = author.split(" ")[0]
             lastname = " ".join(author.split(" ")[1:])
-            datacite["authors"].append({"firstname": firstname, "lastname": lastname})
+            authors.append({"firstname": firstname, "lastname": lastname})
+    print_unordered_list(msg="Current authors:", items=authors)
+
+    add_authors = "yes"
+    while add_authors == "yes":
+
+        add_funding = Prompt.ask(
+            prompt_format("Do you want to add more authors?"),
+            default="yes",
+            choices=["yes", "no"],
+        )
+        print()
+        if add_funding != "yes":
+            break
+
+        author = Prompt.ask(
+            prompt_format(
+                """Please enter a new author
+(for example: 'firstname surname' or 'ORCID:12345678')"""
+            )
+        )
+        firstname = author.split(" ")[0]
+        lastname = " ".join(author.split(" ")[1:])
+        authors.append({"firstname": firstname, "lastname": lastname})
+
+    datacite["authors"] = authors
 
     references = update_references(ds_descr, skip_prompt)
     datacite["references"] = references
