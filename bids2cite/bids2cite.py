@@ -141,9 +141,11 @@ def bids2cite(argv=sys.argv):
     tmp = args.keywords.split(",") if args.keywords else []
     keywords = [x.strip() for x in tmp]
 
-    authors_file = Path(args.authors_file)
-    if not authors_file.exists():
-        authors_file = None
+    authors_file = None
+    if args.authors_file not in ["", None]:
+        authors_file = Path(args.authors_file)
+        if not authors_file.exists():
+            authors_file = None
 
     main(
         bids_dir=Path(args.bids_dir).resolve(),
