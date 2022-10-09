@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-import requests
+import requests  # type: ignore
 from rich import print
 from rich.prompt import Prompt
 
@@ -30,7 +30,7 @@ def update_license(
 
     log.info("update license")
 
-    license_file_present = "LICENSE" in bids_dir.glob("LICENSE*")
+    license_file_present = "LICENSE" in bids_dir.glob("LICENSE*")  # type: ignore
 
     if "License" in ds_desc and ds_desc["License"] not in [None, ""]:
 
@@ -86,6 +86,8 @@ Please add a license that matches that of the dataset_description.json file.[/re
                 if license == "1":
                     add_license_file("CC0", bids_dir)
                     ds_desc["License"] = "CC0"
-                    (datacite, ds_desc) = update_license(datacite, ds_desc, skip_prompt)
+                    (datacite, ds_desc) = update_license(
+                        bids_dir, datacite, ds_desc, skip_prompt
+                    )
 
         return datacite, ds_desc

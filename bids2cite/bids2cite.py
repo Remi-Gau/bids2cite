@@ -7,7 +7,7 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import IO, Optional
+from typing import IO, Any, List, Optional
 
 import ruamel.yaml
 from rich import print
@@ -40,7 +40,9 @@ def update_bidsignore(bids_dir: Path) -> None:
                 f.write("datacite.yml")
 
 
-def update_description(datacite: dict, description, skip_prompt) -> dict:
+def update_description(
+    datacite: dict, description: Optional[str] = None, skip_prompt: bool = False
+) -> dict:
     log.info("update description")
     if description not in [None, ""]:
         datacite["description"] = description
@@ -52,9 +54,14 @@ def update_description(datacite: dict, description, skip_prompt) -> dict:
     return datacite
 
 
-def update_keywords(keywords: list, skip_prompt) -> list:
+def update_keywords(
+    keywords: Optional[List[Any]] = None, skip_prompt: bool = False
+) -> list:
 
     log.info("updating keywords")
+
+    if keywords is None:
+        keywords = []
 
     if not skip_prompt:
         add_keyword = "yes"
@@ -73,7 +80,7 @@ def update_keywords(keywords: list, skip_prompt) -> list:
     return keywords
 
 
-def update_funding(ds_desc: dict, skip_prompt: bool = False) -> dict:
+def update_funding(ds_desc: dict, skip_prompt: bool = False) -> List[str]:
 
     log.info("update funding")
 
@@ -103,7 +110,7 @@ def update_funding(ds_desc: dict, skip_prompt: bool = False) -> dict:
     return funding
 
 
-def update_authors(ds_desc, skip_prompt):
+def update_authors(ds_desc: dict, skip_prompt: bool = False):
     authors = []
     if "Authors" in ds_desc:
         for author in ds_desc["Authors"]:
@@ -146,9 +153,7 @@ def bids2cite(argv=sys.argv):
 
     args = parser.parse_args(argv[1:])
 
-    skip_prompt = False
-    if args.skip_prompt == "true":
-        skip_prompt = True
+    skip_prompt = args.skip_prompt == "true"
 
     log.setLevel(args.verbosity)
 

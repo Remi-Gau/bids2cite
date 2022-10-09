@@ -1,7 +1,7 @@
 import logging
 
-import crossref_commons.retrieval
-import requests
+import crossref_commons.retrieval  # type: ignore
+import requests  # type: ignore
 from rich import print
 from rich.prompt import Prompt
 
@@ -10,7 +10,7 @@ from bids2cite.utils import print_unordered_list, prompt_format
 log = logging.getLogger("bids2datacite")
 
 
-def get_reference_id(reference):
+def get_reference_id(reference: str):
     """Find the reference DOI or PMID"""
 
     ref_id = ""
@@ -18,15 +18,15 @@ def get_reference_id(reference):
     if "pmid:" in reference:
         pmid = reference.split("pmid:")[1]
         ref_id = f"pmid:{pmid}"
-    elif "www.ncbi.nlm.nih.gov/pubmed/" in reference:
-        pmid = reference.split("www.ncbi.nlm.nih.gov/pubmed/")[1]
+    elif "ncbi.nlm.nih.gov/pubmed/" in reference:
+        pmid = reference.split("ncbi.nlm.nih.gov/pubmed/")[1]
         ref_id = f"pmid:{pmid}"
 
     elif "doi:" in reference:
         doi = reference.split("doi:")[1]
         ref_id = f"doi:{doi}"
-    elif "https://doi.org/:" in reference:
-        doi = reference.split("https://doi.org/")[1]
+    elif "doi.org/" in reference:
+        doi = reference.split("doi.org/")[1]
         ref_id = f"doi:{doi}"
 
     if ref_id == "":
@@ -37,7 +37,7 @@ def get_reference_id(reference):
     return ref_id
 
 
-def get_reference_details(reference):
+def get_reference_details(reference: str):
 
     this_reference = {"citation": reference}
 
