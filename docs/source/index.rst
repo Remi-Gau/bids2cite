@@ -10,7 +10,8 @@ Welcome to bids2cite's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-
+   usage_notes
+   modules
 
 Indices and tables
 ==================

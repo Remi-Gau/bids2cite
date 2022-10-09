@@ -10,6 +10,19 @@ cd bids2cite
 pip install .
 ```
 
+### For developpers
+
+```bash
+pip install .[dev]
+```
+
+Basic tests can be run with:
+
+```bash
+make test
+make test-cli
+```
+
 ## Usage
 
 ```bash

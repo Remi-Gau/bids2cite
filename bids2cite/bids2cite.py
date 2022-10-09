@@ -249,21 +249,21 @@ def common_parser() -> MuhParser:
     )
     parser.add_argument(
         "--skip-prompt",
-        help="If you want to not use the prompt interface.",
+        help="Set to 'false' if you want to not use the prompt interface.",
         choices=["true", "false"],
         default="false",
     )
     parser.add_argument(
         "--authors-file",
         help=""".tsv file containing list of potential new authors with the columns:
-- first_name
-- last_name
-- ORCID (optional)
-- affiliation (optional)""",
+                    - first_name\n
+                    - last_name\n
+                    - ORCID (optional)\n
+                    - affiliation (optional)""",
     )
     parser.add_argument(
         "--verbosity",
-        help="DEUG, INFO, WARNING",
+        help="One of: DEBUG, INFO, WARNING",
         choices=["DEBUG", "INFO", "WARNING"],
         default="INFO",
     )
