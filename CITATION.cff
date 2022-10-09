@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+
+title: "bids2cite"
+
+version: 0.1.0
+
+abstract:
+  "Adds a datacite file to a BIDS dataset."
+
+message: "If you use this software, please cite it as below."
+
+repository-code: "https://github.com/Remi-Gau/bids2cite.git"
+
+
+contact:
+  - affiliation: "Université catholique de Louvain"
+    email: remi.gau@uclouvain.be
+    family-names: Gau
+    given-names: Rémi
+
+authors:
+  - family-names: "Gau"
+    given-names: "Rémi"
+    orcid: "https://orcid.org/0000-0002-1535-9767"
+    affiliation: "Université catholique de Louvain"
+
+license: GPL-3.0
+
+keywords:
+  - BIDS
+  - brain imaging data structure
+  - neuroimaging
+  - automated pipeline
+  - MRI
+  - Python
