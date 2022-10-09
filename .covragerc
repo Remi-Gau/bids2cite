@@ -1,0 +1,8 @@
+[run]
+source = bids2cite
+[report]
+source = bids2cite
+omit =
+    _version.py
+    */_version.py
+    */__init__.py
