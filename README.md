@@ -7,6 +7,8 @@
 
 Create a citation file for a BIDS dataset.
 
+Can also be used to update references, authors and add license to a dataset.
+
 ## Installation
 
 ```bash

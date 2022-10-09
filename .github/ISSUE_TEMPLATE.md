@@ -1,4 +1,4 @@
-* bidsMReye version:
+* bids2cite version:
 * Python version:
 * Operating System:
 
