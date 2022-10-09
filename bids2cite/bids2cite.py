@@ -5,6 +5,7 @@ details on the format of datacite for GIN: https://gin.g-node.org/G-Node/Info/wi
 import argparse
 import json
 import logging
+import shutil
 import sys
 from pathlib import Path
 from typing import IO, Any, List, Optional
@@ -149,6 +150,13 @@ def main(
     yaml = ruamel.yaml.YAML()
     yaml.indent(mapping=2, sequence=4, offset=2)
 
+    if not ds_descr_file.exists():
+        log.error(f"dataset_description.json not found in {bids_dir}")
+        sys.exit(1)
+
+    shutil.copyfile(
+        ds_descr_file, ds_descr_file.with_name("dataset_description.json.bak")
+    )
     with open(ds_descr_file, "r") as f:
         ds_desc = json.load(f)
 
