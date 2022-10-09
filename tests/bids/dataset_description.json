@@ -2,7 +2,6 @@
     "Name": "The mother of all experiments",
     "BIDSVersion": "1.6.0",
     "DatasetType": "raw",
-    "License": "CC0",
     "Authors": [
         "Paul Broca",
         "Carl Wernicke"

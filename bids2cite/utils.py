@@ -1,3 +1,4 @@
+"""Misc."""
 import logging
 
 from rich import print
@@ -6,10 +7,12 @@ from rich.traceback import install
 
 
 def prompt_format(msg: str) -> str:
+    """Format prompt message."""
     return f"[bold]{msg}[/bold]"
 
 
 def print_unordered_list(msg: str, items: list) -> None:
+    """Print an unordered list."""
     print(f"\n[underline]{msg}[/underline]")
     for i, item in enumerate(items):
         print(f"\t{i+1}. [bold][white]{item}[/white][/bold]")

@@ -1,3 +1,4 @@
+"""Deal with references."""
 import logging
 
 import crossref_commons.retrieval  # type: ignore
@@ -5,14 +6,14 @@ import requests  # type: ignore
 from rich import print
 from rich.prompt import Prompt
 
-from bids2cite.utils import print_unordered_list, prompt_format
+from bids2cite.utils import print_unordered_list
+from bids2cite.utils import prompt_format
 
 log = logging.getLogger("bids2datacite")
 
 
 def get_reference_id(reference: str):
-    """Find the reference DOI or PMID"""
-
+    """Find the reference DOI or PMID."""
     ref_id = ""
 
     if "pmid:" in reference:
@@ -38,7 +39,7 @@ def get_reference_id(reference: str):
 
 
 def get_reference_details(reference: str):
-
+    """Get reference details."""
     this_reference = {"citation": reference}
 
     info = None
@@ -61,7 +62,7 @@ def get_reference_details(reference: str):
 
 
 def update_references(ds_desc: dict, skip_prompt: bool = False) -> list:
-
+    """Update references based on dataset description."""
     log.info("update references")
 
     references = []
@@ -108,7 +109,7 @@ def update_references(ds_desc: dict, skip_prompt: bool = False) -> list:
 
 
 def get_reference_info_from_doi(doi: str):
-
+    """Get reference info from DOI."""
     content = crossref_commons.retrieval.get_publication_as_json(doi)
 
     authors = []
@@ -128,7 +129,7 @@ def get_reference_info_from_doi(doi: str):
 
 
 def get_reference_info_from_pmid(pmid: str):
-
+    """Get reference info from PubMed."""
     base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi"
     url = f"{base_url}?db=pubmed&id={pmid}&retmode=json"
 

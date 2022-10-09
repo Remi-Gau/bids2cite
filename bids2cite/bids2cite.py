@@ -1,5 +1,6 @@
 """
-adds a datacite to your BIDS dataset
+Add a datacite to your BIDS dataset.
+
 details on the format of datacite for GIN: https://gin.g-node.org/G-Node/Info/wiki/DOIfile
 """
 import argparse
@@ -8,7 +9,10 @@ import logging
 import shutil
 import sys
 from pathlib import Path
-from typing import IO, Any, List, Optional
+from typing import Any
+from typing import IO
+from typing import List
+from typing import Optional
 
 import ruamel.yaml
 from rich import print
@@ -29,6 +33,7 @@ log = logging.getLogger("bids2datacite")
 
 
 def update_bidsignore(bids_dir: Path) -> None:
+    """Update the .bidsignore file."""
     log.info("updating .bidsignore")
     bidsignore = bids_dir.joinpath(".bidsignore")
     if not bidsignore.exists():
@@ -45,6 +50,7 @@ def update_bidsignore(bids_dir: Path) -> None:
 def update_description(
     datacite: dict, description: Optional[str] = None, skip_prompt: bool = False
 ) -> dict:
+    """Update the description of the dataset."""
     log.info("update description")
     if description not in [None, ""]:
         datacite["description"] = description
@@ -59,7 +65,7 @@ def update_description(
 def update_keywords(
     keywords: Optional[List[Any]] = None, skip_prompt: bool = False
 ) -> list:
-
+    """Update the keywords of the dataset."""
     log.info("updating keywords")
 
     if keywords is None:
@@ -83,7 +89,7 @@ def update_keywords(
 
 
 def update_funding(ds_desc: dict, skip_prompt: bool = False) -> List[str]:
-
+    """Update the funding of the dataset."""
     log.info("update funding")
 
     funding = []
@@ -113,7 +119,7 @@ def update_funding(ds_desc: dict, skip_prompt: bool = False) -> List[str]:
 
 
 def bids2cite(argv=sys.argv):
-
+    """Execute the main script for CLI."""
     parser = common_parser()
 
     args = parser.parse_args(argv[1:])
@@ -125,11 +131,16 @@ def bids2cite(argv=sys.argv):
     tmp = args.keywords.split(",") if args.keywords else []
     keywords = [x.strip() for x in tmp]
 
+    authors_file = Path(args.authors_file)
+    if not authors_file.exists():
+        authors_file = None
+
     main(
         bids_dir=Path(args.bids_dir).resolve(),
         description=args.description,
         keywords=keywords,
         skip_prompt=skip_prompt,
+        authors_file=authors_file,
     )
 
 
@@ -138,8 +149,9 @@ def main(
     description: str = None,
     keywords: list = None,
     skip_prompt: bool = False,
+    authors_file: Path = None,
 ):
-
+    """Create a datacite.yml file for a BIDS dataset."""
     log = bids2cite_log(name="bids2datacite")
 
     log.info(f"bids_dir: {bids_dir}")
@@ -174,7 +186,7 @@ def main(
 
     datacite = update_description(datacite, description, skip_prompt)
 
-    authors = update_authors(ds_desc, skip_prompt)
+    authors = update_authors(ds_desc, skip_prompt, authors_file)
     datacite["authors"] = authors
     tmp = [f"{x['firstname']} {x['lastname']}" for x in authors]
     ds_desc["Authors"] = tmp
@@ -240,6 +252,14 @@ def common_parser() -> MuhParser:
         help="If you want to not use the prompt interface.",
         choices=["true", "false"],
         default="false",
+    )
+    parser.add_argument(
+        "--authors-file",
+        help=""".tsv file containing list of potential new authors with the columns:
+- first_name
+- last_name
+- ORCID (optional)
+- affiliation (optional)""",
     )
     parser.add_argument(
         "--verbosity",

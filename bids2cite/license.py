@@ -1,3 +1,4 @@
+"""Deals with license information."""
 import logging
 from pathlib import Path
 
@@ -11,7 +12,7 @@ log = logging.getLogger("bids2datacite")
 
 
 def add_license_file(license_type: str, bids_dir: Path) -> None:
-
+    """Add a license file to the dataset directory."""
     license_file = bids_dir.joinpath("LICENSE")
 
     log.info(f"creating {license_file}")
@@ -27,7 +28,7 @@ def add_license_file(license_type: str, bids_dir: Path) -> None:
 def update_license(
     bids_dir: Path, datacite: dict, ds_desc: dict, skip_prompt: bool = False
 ):
-
+    """Update the license of the dataset."""
     log.info("update license")
 
     license_file_present = "LICENSE" in bids_dir.glob("LICENSE*")  # type: ignore
