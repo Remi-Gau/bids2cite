@@ -4,20 +4,18 @@ details on the format of datacite for GIN: https://gin.g-node.org/G-Node/Info/wi
 """
 
 import json
-from pathlib import Path
-
 import logging
+from pathlib import Path
 
 import requests
 import ruamel.yaml
 from rich import print
-from rich.prompt import Prompt
 from rich.logging import RichHandler
+from rich.prompt import Prompt
 from rich.traceback import install
 
 from references import update_references
-
-from utils import prompt_format, print_unordered_list
+from utils import print_unordered_list, prompt_format
 
 description = ""
 keywords = ["foo", "bar"]
@@ -68,6 +66,7 @@ def update_bidsignore(bids_dir: Path) -> None:
         if "datacite.yml" not in content:
             with bidsignore.open("a") as f:
                 f.write("datacite.yml")
+
 
 def update_description(datacite: dict, description) -> dict:
     log.info("update description")
@@ -128,16 +127,16 @@ def update_license(datacite: dict, ds_descr: dict):
         license_url = ""
 
         if license_name in ["CC0", "cc0-1.0"]:
-            license_name = (
-                "Creative Commons Zero v1.0 Universal Public Domain Dedication"
-            )
+            license_name = "Creative Commons Zero 1.0 Public Domain Dedication"
             license_url = "https://creativecommons.org/publicdomain/zero/1.0/"
             if not license_file_present:
                 add_license_file("CC0", bids_dir)
                 license_file_present = True
 
         elif license_name in ["CC-BY-NC-SA-4.0"]:
-            license_name = "Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public Domain Dedication"
+            license_name = """
+Creative Commons Attribution-NonCommercial-ShareAlike 4.0 Public Domain Dedication
+"""
             license_url = "https://creativecommons.org/licenses/by-nc-sa/4.0/"
 
         datacite["license"]["name"] = license_name

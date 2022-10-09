@@ -1,5 +1,6 @@
 from rich import print
 
+
 def prompt_format(msg: str) -> str:
     return f"[bold]{msg}[/bold]"
 
