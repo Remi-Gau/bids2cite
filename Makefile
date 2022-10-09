@@ -47,9 +47,9 @@ clean-test: ## remove test and coverage artifacts
 	rm -f .coverage
 	rm -fr htmlcov/
 	rm -fr .pytest_cache
-	rm tests/bids/.bidsignore
-	rm tests/bids/datacite.yml
-	rm tests/bids/LICENSE
+	rm -f tests/bids/.bidsignore
+	rm -f tests/bids/datacite.yml
+	rm -f tests/bids/LICENSE
 
 ## INSTALL
 
