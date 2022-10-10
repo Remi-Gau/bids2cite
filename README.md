@@ -113,3 +113,10 @@ main(
 
 More info in the
 [doc](https://bids2cite.readthedocs.io/en/latest/bids2cite.html#bids2cite.bids2cite.main)
+
+## See also...
+
+- [a BIDS dataset_description.json generator with a GUI](https://github.com/tolik-g/BIDS_GUI_dataset_description)
+- datalad-neuroimaging
+  [Pull Request](https://github.com/bids-standard/bids-specification/issues/901)
+  to implement something similar to bids2cite in the datalad ecosysten
