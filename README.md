@@ -1,3 +1,4 @@
+[![Test and coverage](https://github.com/Remi-Gau/bids2cite/actions/workflows/test_and_coverage.yml/badge.svg?branch=main)](https://github.com/Remi-Gau/bids2cite/actions/workflows/test_and_coverage.yml)
 [![codecov](https://codecov.io/gh/Remi-Gau/bids2cite/branch/main/graph/badge.svg?token=UBE490738A)](https://codecov.io/gh/Remi-Gau/bids2cite)
 [![License](https://img.shields.io/badge/license-GPL3-blue.svg)](./LICENSE)
 ![https://github.com/psf/black](https://img.shields.io/badge/code%20style-black-000000.svg)
