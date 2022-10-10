@@ -2,6 +2,7 @@
 [![License](https://img.shields.io/badge/license-GPL3-blue.svg)](./LICENSE)
 ![https://github.com/psf/black](https://img.shields.io/badge/code%20style-black-000000.svg)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/Remi-Gau/bids2cite/main.svg)](https://results.pre-commit.ci/latest/github/Remi-Gau/bids2cite/main)
+[![Documentation Status](https://readthedocs.org/projects/bids2cite/badge/?version=latest)](https://bids2cite.readthedocs.io/en/latest/?badge=latest)
 
 # bids2cite
 
