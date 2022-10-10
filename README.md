@@ -10,6 +10,8 @@ Create a citation file for a BIDS dataset.
 
 Can also be used to update references, authors and add license to a dataset.
 
+You can add references using their DOI or PMID, and add authors by using their ORCID.
+
 ## Visual demo
 
 [![demo](https://user-images.githubusercontent.com/6961185/194825672-d7af29d1-62db-49bf-8d74-9d4fa8d32b32.png)](https://www.youtube.com/embed/BXSW5KGoQRY)
