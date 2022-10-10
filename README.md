@@ -7,12 +7,17 @@
 
 # bids2cite
 
-Create a citation file for a BIDS dataset.
+Create a citation file for a BIDS dataset based on its
+`dataset_description.json` file.
 
-Can also be used to update references, authors and add license to a dataset.
+Can also be used to interactively update references, authors and add a license
+to a dataset.
 
 You can add references using their DOI or PMID, and add authors by using their
-ORCID.
+ORCID. This will also update the `dataset_description.json`.
+
+The original `dataset_description.json` file is backed up in a
+`dataset_description.json.bak` file in case you want to revert the changes.
 
 ## Visual demo
 
