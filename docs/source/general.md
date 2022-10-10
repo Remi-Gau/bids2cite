@@ -37,6 +37,8 @@ make test-cli
 
 ## Usage
 
+### Command line
+
 The most basic usage is:
 
 ```bash
@@ -75,10 +77,30 @@ also include `ORCID` and `affiliation` columns.
 | Rémi       | Gau       | 0000-0002-1535-9767 | UCLouvain   |
 | Mohamed    | Rezk      | 0000-0002-1866-8645 | UCLouvain   |
 
-There is a sample TSV in the [inputs folder](https://github.com/Remi-Gau/bids2cite/tree/main/inputs).
+There is a sample TSV in the
+[inputs folder](https://github.com/Remi-Gau/bids2cite/tree/main/inputs).
 
 Type the following for more info on how to run it:
 
 ```bash
 bids2cite --help
+```
+
+### Python
+
+If you need to incorporate this into a python script you can do like this:
+
+```python
+
+from bids2cite.bids2cite import main
+from pathlib import Path
+
+path_to_bids_dataset = Path("path/to/bids/dataset")
+
+main(
+    bids_dir=path_to_bids_dataset,
+    description="add something",
+    keywords=["foo", "bar"],
+    skip_prompt=True,
+)
 ```
