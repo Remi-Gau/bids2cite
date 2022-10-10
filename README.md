@@ -11,7 +11,8 @@ Create a citation file for a BIDS dataset.
 
 Can also be used to update references, authors and add license to a dataset.
 
-You can add references using their DOI or PMID, and add authors by using their ORCID.
+You can add references using their DOI or PMID, and add authors by using their
+ORCID.
 
 ## Visual demo
 
@@ -39,6 +40,9 @@ make test-cli
 ```
 
 ## Usage
+
+Do not forget to check the [online doc](https://bids2cite.readthedocs.io) for
+more details.
 
 ### Command line
 
@@ -94,7 +98,6 @@ bids2cite --help
 If you need to incorporate this into a python script you can do like this:
 
 ```python
-
 from bids2cite.bids2cite import main
 from pathlib import Path
 
@@ -107,3 +110,6 @@ main(
     skip_prompt=True,
 )
 ```
+
+More info in the
+[doc](https://bids2cite.readthedocs.io/en/latest/bids2cite.html#bids2cite.bids2cite.main)
