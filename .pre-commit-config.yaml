@@ -20,7 +20,7 @@ repos:
       rev: "5.0.4"
       hooks:
       -   id: flake8
-          exclude: tests_.*.py|version.*.py|setup.py # ignore tests and versioneer related code
+          exclude: tests_.*.py|version.*.py|setup.py
 
     - repo: https://github.com/ikamensh/flynt/
       rev: "0.76"
@@ -51,3 +51,8 @@ repos:
         hooks:
         -   id: pyupgrade
             args: [--py38-plus]
+
+    -   repo: https://github.com/MarcoGorelli/auto-walrus
+        rev: v0.2.1
+        hooks:
+        -   id: auto-walrus
