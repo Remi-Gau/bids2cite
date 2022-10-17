@@ -97,13 +97,10 @@ servedocs: docs ## compile the docs watching for changes
 ## TESTS
 
 test: ## run tests quickly with the default Python
-	python -m pytest --cov-config=.coveragerc \
-			--cov=bids2cite
+	python -m pytest
 
 test-html:
-	python -m pytest --cov-config=.coveragerc \
-			--cov=bids2cite \
-			--cov-report html \
+	python -m pytest --cov-report html \
 
 test-cli:
 	bids2cite tests/bids \

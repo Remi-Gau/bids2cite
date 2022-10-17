@@ -1,11 +1,12 @@
 """Deal with authors."""
+from __future__ import annotations
+
 import logging
 from pathlib import Path
-from typing import List
-from typing import Optional
+from typing import Any
 
-import pandas as pd  # type: ignore
-import requests  # type: ignore
+import pandas as pd
+import requests
 from rich.prompt import Prompt
 
 from bids2cite.utils import print_unordered_list
@@ -14,7 +15,7 @@ from bids2cite.utils import prompt_format
 log = logging.getLogger("bids2datacite")
 
 
-def affiliation_from_orcid(orcid_record):
+def affiliation_from_orcid(orcid_record: dict[str, Any]) -> str | None:
     """Get affiliation the most recent employment (top of the list)."""
     if employer := (
         orcid_record.get("activities-summary", {})
@@ -22,23 +23,25 @@ def affiliation_from_orcid(orcid_record):
         .get("employment-summary", [])
     ):
         return employer[0].get("organization", {}).get("name")
+    else:
+        return None
 
 
-def first_name_from_orcid(orcid_record):
+def first_name_from_orcid(orcid_record: dict[str, Any]) -> str:
     """Return first name from ORCID record."""
     return (
         orcid_record.get("person", {}).get("name", {}).get("given-names", {}).get("value")
     )
 
 
-def last_name_from_orcid(orcid_record):
+def last_name_from_orcid(orcid_record: dict[str, Any]) -> str:
     """Return last name from ORCID record."""
     return (
         orcid_record.get("person", {}).get("name", {}).get("family-name", {}).get("value")
     )
 
 
-def get_author_info_from_orcid(orcid: str) -> dict:
+def get_author_info_from_orcid(orcid: str) -> dict[str, Any]:
     """Get author info from ORCID."""
     orcid = orcid.strip()
 
@@ -69,16 +72,16 @@ def get_author_info_from_orcid(orcid: str) -> dict:
     return author_info
 
 
-def parse_author(author: str) -> dict:
+def parse_author(author: str) -> dict[str, str | None]:
     """Parse author string to get first name, last name, affiliation and ORCID."""
     author = author.strip().replace("  ", " ")
 
-    author_info = {
+    author_info: dict[str, str | None] = {
         "first_name": None,
         "last_name": None,
         "affiliation": None,
         "id": None,
-    }  # type: ignore
+    }
 
     if "orcid:" in author.lower():
         if author_info := get_author_info_from_orcid(author.split(":")[1]):
@@ -102,12 +105,12 @@ def parse_author(author: str) -> dict:
     first_name = first_name.strip()
     last_name = last_name.strip()
 
-    author_info["firstname"] = first_name  # type: ignore
-    author_info["lastname"] = last_name  # type: ignore
+    author_info["firstname"] = first_name
+    author_info["lastname"] = last_name
     return author_info
 
 
-def display_new_authors(authors_file: Optional[Path] = None):
+def display_new_authors(authors_file: Path | None = None) -> int:
     """Display new authors from authors file."""
     if authors_file is not None and authors_file.exists():
         tmp = pd.read_csv(authors_file, sep="\t")
@@ -124,21 +127,24 @@ def display_new_authors(authors_file: Optional[Path] = None):
         print_unordered_list(msg="List of potential authors to add:", items=authors_list)
 
         return len(authors_list)
+    else:
+        return 0
 
 
 def update_authors(
-    ds_desc: dict, skip_prompt: bool = False, authors_file: Optional[Path] = None
-):
+    ds_desc: dict[str, Any], skip_prompt: bool = False, authors_file: Path | None = None
+) -> list[dict[str, str | None]]:
     """Update authors."""
-    authors: List[str] = []
+    authors: list[dict[str, str | None]] = []
 
     if "Authors" in ds_desc:
-        authors.extend(parse_author(author) for author in ds_desc["Authors"])  # type: ignore
+        authors.extend(parse_author(author) for author in ds_desc["Authors"])
 
     if skip_prompt:
         return authors
 
     add_authors = "yes"
+
     while add_authors == "yes":
 
         print_unordered_list(msg="Current authors:", items=authors)
@@ -152,6 +158,7 @@ def update_authors(
         if add_authors != "yes":
             break
 
+        author: Any = None
         if authors_file is not None:
             nb_authors = display_new_authors(authors_file)
             choices = [str(i) for i in range(1, nb_authors + 1)]
@@ -164,23 +171,23 @@ def update_authors(
             )
             if author_idx == "0":
                 author = manually_add_author()
-                authors.append(parse_author(author))  # type: ignore
+                authors.append(parse_author(author))
             else:
                 author = choose_from_new_authors(authors_file, int(author_idx) - 1)
                 authors.append(author)
 
         else:
             author = manually_add_author()
-            authors.append(parse_author(author))  # type: ignore
+            authors.append(parse_author(author))
 
     return authors
 
 
-def choose_from_new_authors(authors_file: Path, author_idx: int) -> dict:
+def choose_from_new_authors(authors_file: Path, author_idx: int) -> dict[str, str | None]:
     """Choose author from new authors file."""
     tmp = pd.read_csv(authors_file, sep="\t")
     author = tmp.iloc[author_idx]
-    author_info = {
+    author_info: dict[str, str | None] = {
         "firstname": author["first_name"],
         "lastname": author["last_name"],
         "affiliation": author["affiliation"],
@@ -189,7 +196,7 @@ def choose_from_new_authors(authors_file: Path, author_idx: int) -> dict:
     return author_info
 
 
-def manually_add_author():
+def manually_add_author() -> str:
     """Manually add author."""
     author = Prompt.ask(
         prompt_format(

@@ -1,5 +1,4 @@
-__author__ = """Remi Gau"""
-__email__ = "remi.gau@gmail.com"
+from __future__ import annotations
 
 from . import _version
 

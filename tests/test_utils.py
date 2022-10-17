@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from bids2cite.utils import print_unordered_list
 from bids2cite.utils import prompt_format
 

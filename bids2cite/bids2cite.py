@@ -3,6 +3,8 @@ Add a datacite to your BIDS dataset.
 
 details on the format of datacite for GIN: https://gin.g-node.org/G-Node/Info/wiki/DOIfile
 """
+from __future__ import annotations
+
 import argparse
 import json
 import logging
@@ -11,8 +13,6 @@ import sys
 from pathlib import Path
 from typing import Any
 from typing import IO
-from typing import List
-from typing import Optional
 
 import ruamel.yaml
 from rich import print
@@ -48,8 +48,8 @@ def update_bidsignore(bids_dir: Path) -> None:
 
 
 def update_description(
-    datacite: dict, description: Optional[str] = None, skip_prompt: bool = False
-) -> dict:
+    datacite: dict[str, Any], description: str | None = None, skip_prompt: bool = False
+) -> dict[str, Any]:
     """Update the description of the dataset."""
     log.info("update description")
     if description not in [None, ""]:
@@ -63,8 +63,8 @@ def update_description(
 
 
 def update_keywords(
-    keywords: Optional[List[Any]] = None, skip_prompt: bool = False
-) -> list:
+    keywords: list[Any] | None = None, skip_prompt: bool = False
+) -> list[str]:
     """Update the keywords of the dataset."""
     log.info("updating keywords")
 
@@ -88,14 +88,14 @@ def update_keywords(
 (for example: 'keyword1, keyword2')"""
                 )
             )
-            new_keywords = new_keywords.strip().split(",")
-            for keyword in new_keywords:
+            tmp = new_keywords.strip().split(",")
+            for keyword in tmp:
                 keywords.append(keyword.strip())
 
     return keywords
 
 
-def update_funding(ds_desc: dict, skip_prompt: bool = False) -> List[str]:
+def update_funding(ds_desc: dict[str, Any], skip_prompt: bool = False) -> list[str]:
     """Update the funding of the dataset."""
     log.info("update funding")
 
@@ -125,9 +125,8 @@ def update_funding(ds_desc: dict, skip_prompt: bool = False) -> List[str]:
     return funding
 
 
-def bids2cite(argv=sys.argv):
+def bids2cite(argv: Any = sys.argv) -> None:
     """Execute the main script for CLI."""
-
     log = bids2cite_log(name="bids2datacite")
 
     parser = common_parser()
@@ -158,11 +157,11 @@ def bids2cite(argv=sys.argv):
 
 def main(
     bids_dir: Path,
-    description: str = None,
-    keywords: list = None,
+    description: str | None = None,
+    keywords: list[str] | None = None,
     skip_prompt: bool = False,
-    authors_file: Path = None,
-):
+    authors_file: Path | None = None,
+) -> None:
     """Create a datacite.yml file for a BIDS dataset."""
     log = bids2cite_log(name="bids2datacite")
 
@@ -181,10 +180,10 @@ def main(
     shutil.copyfile(
         ds_descr_file, ds_descr_file.with_name("dataset_description.json.bak")
     )
-    with open(ds_descr_file, "r") as f:
-        ds_desc = json.load(f)
+    with open(ds_descr_file) as f:
+        ds_desc: dict[str, Any] = json.load(f)
 
-    datacite = {
+    datacite: dict[str, Any] = {
         "authors": [],
         "title": ds_desc["Name"],
         "description": "",
@@ -231,7 +230,7 @@ def main(
 class MuhParser(argparse.ArgumentParser):
     """Parser for the main script."""
 
-    def _print_message(self, message: str, file: Optional[IO[str]] = None) -> None:
+    def _print_message(self, message: str, file: IO[str] | None = None) -> None:
         print(message, file=file)
 
 

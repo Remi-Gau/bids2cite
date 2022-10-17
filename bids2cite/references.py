@@ -1,8 +1,11 @@
 """Deal with references."""
-import logging
+from __future__ import annotations
 
-import crossref_commons.retrieval  # type: ignore
-import requests  # type: ignore
+import logging
+from typing import Any
+
+import crossref_commons.retrieval
+import requests
 from rich import print
 from rich.prompt import Prompt
 
@@ -12,7 +15,7 @@ from bids2cite.utils import prompt_format
 log = logging.getLogger("bids2datacite")
 
 
-def get_reference_id(reference: str):
+def get_reference_id(reference: str) -> str:
     """Find the reference DOI or PMID."""
     ref_id = ""
 
@@ -38,7 +41,7 @@ def get_reference_id(reference: str):
     return ref_id
 
 
-def get_reference_details(reference: str):
+def get_reference_details(reference: str) -> dict[str, str]:
     """Get reference details."""
     this_reference = {"citation": reference}
 
@@ -61,7 +64,9 @@ def get_reference_details(reference: str):
     return this_reference
 
 
-def update_references(ds_desc: dict, skip_prompt: bool = False) -> list:
+def update_references(
+    ds_desc: dict[str, Any], skip_prompt: bool = False
+) -> list[dict[str, str]]:
     """Update references based on dataset description."""
     log.info("update references")
 
@@ -83,13 +88,13 @@ def update_references(ds_desc: dict, skip_prompt: bool = False) -> list:
     add_references = "yes"
     while add_references == "yes":
 
-        add_funding = Prompt.ask(
+        add_references = Prompt.ask(
             prompt_format("Do you want to add more references?"),
             default="yes",
             choices=["yes", "no"],
         )
         print()
-        if add_funding != "yes":
+        if add_references != "yes":
             break
 
         reference = Prompt.ask(
@@ -108,7 +113,7 @@ def update_references(ds_desc: dict, skip_prompt: bool = False) -> list:
     return references
 
 
-def get_reference_info_from_doi(doi: str):
+def get_reference_info_from_doi(doi: str) -> dict[str, Any]:
     """Get reference info from DOI."""
     content = crossref_commons.retrieval.get_publication_as_json(doi)
 
@@ -128,7 +133,7 @@ def get_reference_info_from_doi(doi: str):
     }
 
 
-def get_reference_info_from_pmid(pmid: str):
+def get_reference_info_from_pmid(pmid: str) -> None | dict[str, Any]:
     """Get reference info from PubMed."""
     base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi"
     url = f"{base_url}?db=pubmed&id={pmid}&retmode=json"

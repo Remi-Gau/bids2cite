@@ -1,5 +1,8 @@
 """Misc."""
+from __future__ import annotations
+
 import logging
+from typing import Any
 
 from rich import print
 from rich.logging import RichHandler
@@ -11,7 +14,7 @@ def prompt_format(msg: str) -> str:
     return f"[bold]{msg}[/bold]"
 
 
-def print_unordered_list(msg: str, items: list) -> None:
+def print_unordered_list(msg: str, items: list[Any]) -> None:
     """Print an unordered list."""
     print(f"\n[underline]{msg}[/underline]")
     for i, item in enumerate(items):
@@ -19,7 +22,7 @@ def print_unordered_list(msg: str, items: list) -> None:
     print()
 
 
-def bids2cite_log(name=None):
+def bids2cite_log(name: str | None = None) -> logging.Logger:
     """Create log.
 
     :param name: _description_, defaults to None

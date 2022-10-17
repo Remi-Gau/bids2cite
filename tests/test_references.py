@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pytest
 
 from bids2cite.references import get_reference_id

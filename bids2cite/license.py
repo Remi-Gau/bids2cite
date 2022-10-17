@@ -1,8 +1,11 @@
 """Deals with license information."""
+from __future__ import annotations
+
 import logging
 from pathlib import Path
+from typing import Any
 
-import requests  # type: ignore
+import requests
 from rich import print
 from rich.prompt import Prompt
 
@@ -26,8 +29,11 @@ def add_license_file(license_type: str, bids_dir: Path) -> None:
 
 
 def update_license(
-    bids_dir: Path, datacite: dict, ds_desc: dict, skip_prompt: bool = False
-):
+    bids_dir: Path,
+    datacite: dict[str, Any],
+    ds_desc: dict[str, Any],
+    skip_prompt: bool = False,
+) -> tuple[dict[str, Any], dict[str, Any]]:
     """Update the license of the dataset."""
     log.info("update license")
 
@@ -92,3 +98,5 @@ Please add a license that matches that of the dataset_description.json file.[/re
                     )
 
         return datacite, ds_desc
+
+    return datacite, ds_desc

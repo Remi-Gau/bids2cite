@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from utils import get_test_dir
 
 from bids2cite.bids2cite import main
