@@ -213,7 +213,10 @@ def bids2cite(
     datacite["funding"] = funding
     ds_desc["Funding"] = funding
 
-    (datacite, ds_desc) = update_license(bids_dir, datacite, ds_desc, skip_prompt)
+    (license_name, license_url) = update_license(bids_dir, ds_desc, skip_prompt)
+    ds_desc["License"] = license_name
+    datacite["license"]["name"] = license_name
+    datacite["license"]["url"] = license_url
 
     keywords = update_keywords(keywords, skip_prompt)
     datacite["keywords"] = keywords

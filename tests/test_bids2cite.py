@@ -6,7 +6,7 @@ from bids2cite.bids2cite import bids2cite
 from bids2cite.bids2cite import update_bidsignore
 
 
-def test_update_bidsignore():
+def test_update_bidsignore() -> None:
 
     bids_dir = get_test_dir().joinpath("bids")
 
@@ -30,7 +30,7 @@ def test_update_bidsignore():
     bidsignore.unlink(missing_ok=True)
 
 
-def test_bids2cite():
+def test_bids2cite() -> None:
 
     bids_dir = get_test_dir().joinpath("bids")
     bids2cite(
@@ -44,5 +44,7 @@ def test_bids2cite():
     assert bidsignore.exists()
     bidsignore.unlink(missing_ok=True)
 
+    assert bids_dir.joinpath("LICENSE").exists()
     bids_dir.joinpath("LICENSE").unlink(missing_ok=True)
+
     bids_dir.joinpath("datacite.yml").unlink(missing_ok=True)

@@ -7,6 +7,7 @@
         "Carl Wernicke",
         "Remi Gau, ORCID:0000-0002-1535-9767"
     ],
+    "License": "CC0",
     "Acknowledgements": "Special thanks to Korbinian Brodmann for help in formatting this dataset in BIDS. We thank Alan Lloyd Hodgkin and Andrew Huxley for helpful comments and discussions about the experiment and manuscript; Hermann Ludwig Helmholtz for administrative support; and Claudius Galenus for providing data for the medial-to-lateral index analysis.",
     "HowToAcknowledge": "Please cite this paper: https://www.ncbi.nlm.nih.gov/pubmed/33932337",
     "Funding": [
