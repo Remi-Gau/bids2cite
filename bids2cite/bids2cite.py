@@ -46,19 +46,19 @@ def update_bidsignore(bids_dir: Path) -> None:
                 f.write("datacite.yml")
 
 
-def update_description(
-    datacite: dict[str, Any], description: str | None = None, skip_prompt: bool = False
-) -> dict[str, Any]:
+def update_description(description: str | None = None, skip_prompt: bool = False) -> str:
     """Update the description of the dataset."""
     log.info("update description")
     if description not in [None, ""]:
-        datacite["description"] = description
+        description = description
     elif not skip_prompt:
-        datacite["description"] = Prompt.ask(
+        description = Prompt.ask(
             prompt_format("\nPlease enter a description for the dataset")
         )
         print()
-    return datacite
+    if description is None:
+        description = ""
+    return description
 
 
 def update_keywords(
@@ -191,7 +191,8 @@ def bids2cite(
         "templateversion": 1.2,
     }
 
-    datacite = update_description(datacite, description, skip_prompt)
+    description = update_description(description, skip_prompt)
+    datacite["description"] = description
 
     authors = update_authors(ds_desc, skip_prompt, authors_file)
     datacite["authors"] = authors
