@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from utils import get_test_dir
 
-from bids2cite.bids2cite import main
+from bids2cite.bids2cite import bids2cite
 from bids2cite.bids2cite import update_bidsignore
 
 
@@ -30,10 +30,10 @@ def test_update_bidsignore():
     bidsignore.unlink(missing_ok=True)
 
 
-def test_main():
+def test_bids2cite():
 
     bids_dir = get_test_dir().joinpath("bids")
-    main(
+    bids2cite(
         bids_dir=bids_dir,
         description="add something",
         keywords=["foo", "bar"],

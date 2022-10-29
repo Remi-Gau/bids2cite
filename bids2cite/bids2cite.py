@@ -125,7 +125,7 @@ def update_funding(ds_desc: dict[str, Any], skip_prompt: bool = False) -> list[s
     return funding
 
 
-def bids2cite(argv: Any = sys.argv) -> None:
+def cli(argv: Any = sys.argv) -> None:
     """Execute the main script for CLI."""
     log = bids2cite_log(name="bids2datacite")
 
@@ -146,7 +146,7 @@ def bids2cite(argv: Any = sys.argv) -> None:
         if not authors_file.exists():
             authors_file = None
 
-    main(
+    bids2cite(
         bids_dir=Path(args.bids_dir).resolve(),
         description=args.description,
         keywords=keywords,
@@ -155,7 +155,7 @@ def bids2cite(argv: Any = sys.argv) -> None:
     )
 
 
-def main(
+def bids2cite(
     bids_dir: Path,
     description: str | None = None,
     keywords: list[str] | None = None,
