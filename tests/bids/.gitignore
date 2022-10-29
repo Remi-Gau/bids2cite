@@ -1,4 +1,5 @@
 datacite.yml
 .bidsignore
+derivatives
 LICENSE
 dataset_description.json.bak

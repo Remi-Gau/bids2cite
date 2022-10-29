@@ -8,7 +8,6 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import shutil
 import sys
 from pathlib import Path
 from typing import Any
@@ -177,9 +176,6 @@ def bids2cite(
         log.error(f"dataset_description.json not found in {bids_dir}")
         sys.exit(1)
 
-    shutil.copyfile(
-        ds_descr_file, ds_descr_file.with_name("dataset_description.json.bak")
-    )
     with open(ds_descr_file) as f:
         ds_desc: dict[str, Any] = json.load(f)
 
@@ -225,8 +221,11 @@ def bids2cite(
     with open(datacite_file, "w") as f:
         yaml.dump(datacite, f)
 
-    log.info(f"updating {ds_descr_file}")
-    with open(ds_descr_file, "w") as f:
+    output_dir = ds_descr_file.parent.joinpath("derivatives", "bids2cite")
+    output_dir.mkdir(exist_ok=True, parents=True)
+    output_file = output_dir.joinpath("dataset_description.json")
+    log.info(f"updating {output_file}")
+    with open(output_file, "w") as f:
         json.dump(ds_desc, f, indent=4)
 
     update_bidsignore(bids_dir)

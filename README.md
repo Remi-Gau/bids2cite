@@ -14,10 +14,10 @@ Can also be used to interactively update references, authors and add a license
 to a dataset.
 
 You can add references using their DOI or PMID, and add authors by using their
-ORCID. This will also update the `dataset_description.json`.
+ORCID.
 
-The original `dataset_description.json` file is backed up in a
-`dataset_description.json.bak` file in case you want to revert the changes.
+This will also update the `dataset_description.json` by creating in a new file
+in a `derivatives/bids2cite` folder.
 
 ## Visual demo
 
