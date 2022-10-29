@@ -199,7 +199,12 @@ def bids2cite(
 
     authors = update_authors(ds_desc, skip_prompt, authors_file)
     datacite["authors"] = authors
-    tmp = [f"{x['firstname']} {x['lastname']}" for x in authors]
+    tmp = []
+    for x in authors:
+        this_author = f"{x['firstname']} {x['lastname']}"
+        if x.get("id"):
+            this_author += f", {x['id']}"
+        tmp.append(this_author)
     ds_desc["Authors"] = tmp
 
     references = update_references(ds_desc, skip_prompt)
