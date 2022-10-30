@@ -14,6 +14,8 @@ from typing import Any
 from typing import IO
 
 import ruamel.yaml
+from cffconvert.cli.create_citation import create_citation
+from cffconvert.cli.validate_or_write_output import validate_or_write_output
 from rich import print
 from rich.prompt import Prompt
 
@@ -282,6 +284,11 @@ def bids2cite(
         json.dump(ds_desc, f, indent=4)
 
     update_bidsignore(bids_dir)
+
+    citation = create_citation(infile=citation_file, url=None)
+    validate_or_write_output(
+        outfile=None, outputformat=None, validate_only=True, citation=citation
+    )
 
 
 class MuhParser(argparse.ArgumentParser):
