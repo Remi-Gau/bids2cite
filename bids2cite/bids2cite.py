@@ -243,7 +243,7 @@ def bids2cite(
 
     output_file = output_dir.joinpath("dataset_description.json")
     log.info(f"updating {output_file}")
-    with open(output_file, "w") as f:
+    with open(output_file, "w", encoding="utf-8") as f:
         json.dump(ds_desc, f, indent=4)
 
     """datacite.yml"""
@@ -270,7 +270,7 @@ def bids2cite(
 
         datacite_file = output_dir.joinpath("datacite.yml")
         log.info(f"creating {datacite_file}")
-        with open(datacite_file, "w") as f:
+        with open(datacite_file, "w", encoding="utf-8") as f:
             yaml.dump(datacite, f)
 
     """CITATION.cff"""
@@ -296,7 +296,7 @@ def bids2cite(
 
         citation_file = output_dir.joinpath("CITATION.cff")
         log.info(f"creating {citation_file}")
-        with open(citation_file, "w") as f:
+        with open(citation_file, "w", encoding="utf-8") as f:
             yaml.dump(citation, f)
 
         citation = create_citation(infile=citation_file, url=None)

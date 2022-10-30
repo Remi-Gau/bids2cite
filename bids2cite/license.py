@@ -67,7 +67,7 @@ def add_license_file(license_type: str, output_dir: Path) -> None:
         except Exception:
             license_content = response.content.decode("utf-8")
 
-        with license_file.open("w") as f:
+        with license_file.open("w", encoding="utf-8") as f:
             f.write(license_content)
     else:
         log.warning(f"Could not get license from {url}")
