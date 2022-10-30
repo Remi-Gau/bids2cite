@@ -24,11 +24,14 @@ def test_add_license_file():
 
 def test_update_license():
 
+    bids_dir = get_test_dir().joinpath("bids")
     output_dir = get_test_dir().joinpath("bids", "derivatives", "bids2cite")
 
     ds_desc = {"License": "CC0"}
 
-    (license_name, license_url) = update_license(output_dir, ds_desc, skip_prompt=True)
+    (license_name, license_url) = update_license(
+        bids_dir, output_dir, ds_desc, skip_prompt=True
+    )
 
     assert license_name == "CC0-1.0"
     assert license_url == "https://creativecommons.org/publicdomain/zero/1.0/"

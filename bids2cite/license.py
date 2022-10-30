@@ -9,6 +9,7 @@ import requests
 from rich import print
 from rich.prompt import Prompt
 
+from bids2cite.utils import print_ordered_list
 from bids2cite.utils import prompt_format
 
 log = logging.getLogger("bids2datacite")
@@ -46,9 +47,9 @@ def add_license_file(license_type: str, output_dir: Path) -> None:
     licenses = supported_licenses()
 
     if license_type not in (licenses_choices := list(licenses.keys())):
-        log.warning(
-            f"License {license_type} not recognized. Supported licenses are: {licenses_choices}"
-        )
+        log.warning(f"License {license_type} not recognized.")
+        print_ordered_list(msg="Supported licenses are:", items=licenses_choices)
+
         return
 
     url = licenses[license_type].get("api_url", "")
@@ -74,6 +75,7 @@ def add_license_file(license_type: str, output_dir: Path) -> None:
 
 
 def update_license(
+    bids_dir: Path,
     output_dir: Path,
     ds_desc: dict[str, Any],
     skip_prompt: bool = False,
@@ -84,7 +86,7 @@ def update_license(
 
     name, url = identify_license(ds_desc)
 
-    license_file_present = "LICENSE" in [x.name for x in output_dir.glob("LICENSE*")]
+    license_file_present = "LICENSE" in [x.name for x in bids_dir.glob("LICENSE*")]
     if force or not license_file_present:
         add_license_file(name, output_dir)
 
@@ -93,11 +95,16 @@ def update_license(
 
         if license_file_present:
             log.warning(
-                """License file found in the dataset but not in the dataset_description.json file."""
+                """License found in output folder but not dataset_description.json."""
             )
 
         if not skip_prompt:
-            (name, url) = manually_add_license(output_dir, ds_desc, skip_prompt)
+            (name, url) = manually_add_license(
+                bids_dir=bids_dir,
+                output_dir=output_dir,
+                ds_desc=ds_desc,
+                skip_prompt=skip_prompt,
+            )
 
     return name, url
 
@@ -120,12 +127,13 @@ def identify_license(ds_desc: dict[str, Any]) -> tuple[str, str]:
         log.debug(f"License {name} found.")
 
     else:
-        log.warning(f"License {name} not recognized.")
+        log.warning("No license found.")
 
     return name, url
 
 
 def manually_add_license(
+    bids_dir: Path,
     output_dir: Path,
     ds_desc: dict[str, Any],
     skip_prompt: bool = False,
@@ -141,26 +149,22 @@ def manually_add_license(
     if add_license == "yes":
 
         licenses = list(supported_licenses().keys())
-        licenses_choices = ""
-        choices = []
-        for i, license in enumerate(licenses):
-            choices.append(str(i + 1))
-            licenses_choices += f"\n\t{i + 1}. {license}"
+        choices = [str(i + 1) for i, _ in enumerate(licenses)]
 
-        print(f"Possible licences:{licenses_choices}")
+        print_ordered_list(msg="Possible licences:", items=licenses)
         license_index = Prompt.ask(
             prompt_format("Please choose a license."),
             choices=choices,
             default=1,
         )
 
-        if license_index != str(len(licenses) + 1):
-            ds_desc["License"] = licenses[int(license_index)]
-            (name, url) = update_license(
-                output_dir=output_dir,
-                ds_desc=ds_desc,
-                skip_prompt=skip_prompt,
-                force=True,
-            )
+        ds_desc["License"] = licenses[int(license_index) - 1]
+        (name, url) = update_license(
+            bids_dir=bids_dir,
+            output_dir=output_dir,
+            ds_desc=ds_desc,
+            skip_prompt=skip_prompt,
+            force=True,
+        )
 
     return name, url

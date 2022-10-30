@@ -9,7 +9,7 @@ import requests
 from rich import print
 from rich.prompt import Prompt
 
-from bids2cite.utils import print_unordered_list
+from bids2cite.utils import print_ordered_list
 from bids2cite.utils import prompt_format
 
 log = logging.getLogger("bids2datacite")
@@ -80,7 +80,7 @@ def update_references(
         return references
 
     items = [x["citation"] for x in references]
-    print_unordered_list(msg="Current references:", items=items)
+    print_ordered_list(msg="Current references:", items=items)
 
     add_references = "yes"
     while add_references == "yes":
@@ -105,7 +105,7 @@ def update_references(
         if "id" in this_reference:
             references.append(this_reference)
             items = [x["citation"] for x in references]
-            print_unordered_list(msg="Current references:", items=items)
+            print_ordered_list(msg="Current references:", items=items)
 
     return references
 

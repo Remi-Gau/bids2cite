@@ -9,7 +9,7 @@ import pandas as pd
 import requests
 from rich.prompt import Prompt
 
-from bids2cite.utils import print_unordered_list
+from bids2cite.utils import print_ordered_list
 from bids2cite.utils import prompt_format
 
 log = logging.getLogger("bids2datacite")
@@ -124,7 +124,7 @@ def display_new_authors(authors_file: Path | None = None) -> int:
             for ind in tmp.index
         ]
 
-        print_unordered_list(msg="List of potential authors to add:", items=authors_list)
+        print_ordered_list(msg="List of potential authors to add:", items=authors_list)
 
         return len(authors_list)
     else:
@@ -148,7 +148,7 @@ def update_authors(
 
     while add_authors == "yes":
 
-        print_unordered_list(msg="Current authors:", items=authors)
+        print_ordered_list(msg="Current authors:", items=authors)
 
         add_authors = Prompt.ask(
             prompt_format("Do you want to add more authors?"),

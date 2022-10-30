@@ -32,7 +32,7 @@ from bids2cite.references import (
 )
 from bids2cite.utils import (
     bids2cite_log,
-    print_unordered_list,
+    print_ordered_list,
     prompt_format,
     log_levels,
     default_log_level,
@@ -85,7 +85,7 @@ def update_keywords(
     if not skip_prompt:
         add_keyword = "yes"
         while add_keyword == "yes":
-            print_unordered_list(msg="Current keywords:", items=keywords)
+            print_ordered_list(msg="Current keywords:", items=keywords)
             add_keyword = Prompt.ask(
                 prompt_format("Do you want to add more keywords?"),
                 default="yes",
@@ -119,7 +119,7 @@ def update_funding(ds_desc: dict[str, Any], skip_prompt: bool = False) -> list[s
 
     add_funding = "yes"
     while add_funding == "yes":
-        print_unordered_list(msg="Current fundings:", items=funding)
+        print_ordered_list(msg="Current fundings:", items=funding)
         add_funding = Prompt.ask(
             prompt_format("Do you want to add more funding?"),
             default="yes",
@@ -228,7 +228,9 @@ def bids2cite(
 
     if license is not None:
         ds_desc["License"] = license
-    (license_name, license_url) = update_license(output_dir, ds_desc, skip_prompt)
+    (license_name, license_url) = update_license(
+        bids_dir, output_dir, ds_desc, skip_prompt
+    )
 
     keywords = update_keywords(keywords, skip_prompt)
 

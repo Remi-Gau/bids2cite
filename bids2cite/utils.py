@@ -14,7 +14,7 @@ def prompt_format(msg: str) -> str:
     return f"[bold]{msg}[/bold]"
 
 
-def print_unordered_list(msg: str, items: list[Any]) -> None:
+def print_ordered_list(msg: str, items: list[Any]) -> None:
     """Print an unordered list."""
     print(f"\n[underline]{msg}[/underline]")
     for i, item in enumerate(items):
