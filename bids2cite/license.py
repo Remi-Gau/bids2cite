@@ -16,16 +16,15 @@ log = logging.getLogger("bids2datacite")
 
 def add_license_file(license_type: str, bids_dir: Path) -> None:
     """Add a license file to the dataset directory."""
-    license_file = bids_dir.joinpath("LICENSE")
+    if license_type not in ["CC0-1.0", "CC0"]:
+        return
 
-    log.info(f"creating {license_file}")
-
-    if license_type == "CC0":
-        url = "https://api.github.com/licenses/cc0-1.0"
-
+    url = "https://api.github.com/licenses/cc0-1.0"
     response = requests.get(url)
 
     if response.status_code == 200:
+        license_file = bids_dir.joinpath("LICENSE")
+        log.info(f"creating {license_file}")
         license_content = response.json()["body"]
         with license_file.open("w") as f:
             f.write(license_content)
@@ -43,35 +42,20 @@ def update_license(
 
     license_file_present = "LICENSE" in bids_dir.glob("LICENSE*")  # type: ignore
 
-    license_name = ds_desc.get("License", "")
-    license_url = ""
+    name, url = identify_license(ds_desc)
 
-    if license_name not in [""]:
+    if name == "CC0-1.0" and not license_file_present:
+        add_license_file("CC0-1.0", bids_dir)
+        return name, url
 
-        if license_name.lower() in ["cc0", "cc0-1.0", "creative commons zero"]:
-            license_name = "CC0-1.0"
-            license_url = "https://creativecommons.org/publicdomain/zero/1.0/"
-
-            if not license_file_present:
-                add_license_file("CC0", bids_dir)
-                return license_name, license_url
-
-        elif license_name in [
-            "CC-BY-NC-SA-4.0",
-            "Attribution-NonCommercial-ShareAlike 4.0",
-        ]:
-            license_name = "CC-BY-NC-SA-4.0"
-            license_url = "https://creativecommons.org/licenses/by-nc-sa/4.0/"
-            return license_name, license_url
-
-        if not license_file_present:
-            log.warning(
-                """There is no license file in the dataset directory.
+    if not license_file_present:
+        log.warning(
+            """There is no license file in the dataset directory.
 Please add a license that matches that of the dataset_description.json file.
 """
-            )
+        )
 
-    else:
+    if name == "":
 
         if license_file_present:
             log.warning(
@@ -79,14 +63,35 @@ Please add a license that matches that of the dataset_description.json file.
             )
 
         if not skip_prompt:
-            (license_name, license_url) = manually_add_license(
-                bids_dir, ds_desc, skip_prompt
-            )
+            (name, url) = manually_add_license(bids_dir, ds_desc, skip_prompt)
 
-    if license_name is None:
-        license_name = ""
+    return name, url
 
-    return license_name, license_url
+
+def identify_license(ds_desc: dict[str, Any]) -> tuple[str, str]:
+    """Identify the license of the dataset."""
+    name = ds_desc.get("License", "")
+    url = ""
+
+    if name not in [""]:
+
+        if name.lower() in ["cc0", "cc0-1.0", "creative commons zero"]:
+            name = "CC0-1.0"
+            url = "https://creativecommons.org/publicdomain/zero/1.0/"
+            log.info(f"License {name} found.")
+
+        elif name in [
+            "CC-BY-NC-SA-4.0",
+            "Attribution-NonCommercial-ShareAlike 4.0",
+        ]:
+            name = "CC-BY-NC-SA-4.0"
+            url = "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+            log.info(f"License {name} found.")
+
+        else:
+            log.warning(f"License {name} not recognized.")
+
+    return name, url
 
 
 def manually_add_license(
@@ -104,7 +109,7 @@ def manually_add_license(
     if add_license == "yes":
         print(
             """Possible licences:
-1. CC0
+1. CC0-1.0
 2. None"""
         )
         license = Prompt.ask(
@@ -113,8 +118,8 @@ def manually_add_license(
             default=1,
         )
         if license == "1":
-            add_license_file("CC0", bids_dir)
-            ds_desc["License"] = "CC0"
-            (license_name, license_url) = update_license(bids_dir, ds_desc, skip_prompt)
+            add_license_file("CC0-1.0", bids_dir)
+            ds_desc["License"] = "CC0-1.0"
+            (name, url) = update_license(bids_dir, ds_desc, skip_prompt)
 
-    return license_name, license_url
+    return name, url

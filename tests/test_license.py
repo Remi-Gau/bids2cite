@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import pytest
 from utils import get_test_dir
 
 from bids2cite.license import add_license_file
+from bids2cite.license import identify_license
 from bids2cite.license import update_license
 
 
@@ -29,3 +31,21 @@ def test_update_license():
 
     assert bids_dir.joinpath("LICENSE").exists()
     bids_dir.joinpath("LICENSE").unlink(missing_ok=True)
+
+
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        ("CC0", "CC0-1.0"),
+        ("CC-BY-NC-SA-4.0", "CC-BY-NC-SA-4.0"),
+        ("", ""),
+        ("foo", "foo"),
+    ],
+)
+def test_identify_license(input, expected):
+
+    ds_desc = {"License": input}
+
+    (name, url) = identify_license(ds_desc)
+
+    assert name == expected
