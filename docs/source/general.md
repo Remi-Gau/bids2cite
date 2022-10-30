@@ -1,6 +1,6 @@
 [![Test and coverage](https://github.com/Remi-Gau/bids2cite/actions/workflows/test_and_coverage.yml/badge.svg?branch=main)](https://github.com/Remi-Gau/bids2cite/actions/workflows/test_and_coverage.yml)
 [![codecov](https://codecov.io/gh/Remi-Gau/bids2cite/branch/main/graph/badge.svg?token=UBE490738A)](https://codecov.io/gh/Remi-Gau/bids2cite)
-[![License](https://img.shields.io/badge/license-GPL3-blue.svg)](./LICENSE)
+![License](https://img.shields.io/badge/license-GPL3-blue.svg)
 ![https://github.com/psf/black](https://img.shields.io/badge/code%20style-black-000000.svg)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/Remi-Gau/bids2cite/main.svg)](https://results.pre-commit.ci/latest/github/Remi-Gau/bids2cite/main)
 [![Documentation Status](https://readthedocs.org/projects/bids2cite/badge/?version=latest)](https://bids2cite.readthedocs.io/en/latest/?badge=latest)
