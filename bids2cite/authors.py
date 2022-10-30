@@ -205,3 +205,33 @@ def manually_add_author() -> str:
         )
     )
     return author
+
+
+def authors_for_desc(authors: list[dict[str, str | None]]) -> list[str]:
+    """Return authors formatted for dataset_description.json."""
+    tmp = []
+    for x in authors:
+        this_author = f"{x['firstname']} {x['lastname']}"
+        if x.get("id"):
+            this_author += f", {x['id']}"
+        tmp.append(this_author)
+    return tmp
+
+
+def authors_for_citation(
+    authors: list[dict[str, str | None]]
+) -> list[dict[str, str | None]]:
+    """Return authors formatted for citation.cff."""
+    tmp = []
+    for x in authors:
+        this_author = {
+            "given-names": x.get("firstname", ""),
+            "family-names": x.get("lastname", ""),
+        }
+        if x.get("id"):
+            orcid = x.get("id")
+            this_author["orcid"] = f"https://orcid.org/{orcid.replace('ORCID:', '')}"  # type: ignore
+        if x.get("affiliation"):
+            this_author["affiliation"] = x.get("affiliation", "")
+        tmp.append(this_author)
+    return tmp

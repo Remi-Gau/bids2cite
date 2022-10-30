@@ -21,9 +21,13 @@ from . import _version
 
 __version__ = _version.get_versions()["version"]
 
-from bids2cite.authors import update_authors
+from bids2cite.authors import update_authors, authors_for_desc, authors_for_citation
 from bids2cite.license import update_license
-from bids2cite.references import update_references
+from bids2cite.references import (
+    update_references,
+    references_for_datacite,
+    references_for_citation,
+)
 from bids2cite.utils import bids2cite_log, print_unordered_list, prompt_format
 
 bids_dir = Path(__file__).parent.joinpath("tests", "bids")
@@ -168,6 +172,7 @@ def bids2cite(
 
     ds_descr_file = bids_dir.joinpath("dataset_description.json")
     datacite_file = bids_dir.joinpath("datacite.yml")
+    citation_file = bids_dir.joinpath("CITATION.cff")
 
     yaml = ruamel.yaml.YAML()
     yaml.indent(mapping=2, sequence=4, offset=2)
@@ -185,29 +190,38 @@ def bids2cite(
         "description": "",
         "keywords": [],
         "license": {"name": "", "url": ""},
-        "funding": [],
-        "references": [],
         "resourcetype": "Dataset",
+        "references": [],
         "templateversion": 1.2,
+        "funding": [],
+    }
+
+    citation: dict[str, Any] = {
+        "authors": [],
+        "title": ds_desc["Name"],
+        "message": "",
+        "keywords": [],
+        "license": "",
+        "type": "dataset",
+        "identifiers": [],
+        "cff-version": "1.2.0",
     }
 
     description = update_description(description, skip_prompt)
     datacite["description"] = description
+    citation["message"] = description
+    if description == "":
+        citation["message"] = "TODO"
 
     authors = update_authors(ds_desc, skip_prompt, authors_file)
     datacite["authors"] = authors
-    tmp = []
-    for x in authors:
-        this_author = f"{x['firstname']} {x['lastname']}"
-        if x.get("id"):
-            this_author += f", {x['id']}"
-        tmp.append(this_author)
-    ds_desc["Authors"] = tmp
+    ds_desc["authors"] = authors_for_desc(authors)
+    citation["authors"] = authors_for_citation(authors)
 
     references = update_references(ds_desc, skip_prompt)
     datacite["references"] = references
-    tmp = [x["citation"] for x in references]
-    ds_desc["ReferencesAndLinks"] = tmp
+    ds_desc["ReferencesAndLinks"] = references_for_datacite(references)
+    citation["identifiers"] = references_for_citation(references)
 
     funding = update_funding(ds_desc, skip_prompt)
     datacite["funding"] = funding
@@ -217,13 +231,22 @@ def bids2cite(
     ds_desc["License"] = license_name
     datacite["license"]["name"] = license_name
     datacite["license"]["url"] = license_url
+    citation["license"] = license_name
 
     keywords = update_keywords(keywords, skip_prompt)
     datacite["keywords"] = keywords
+    if keywords not in [None, []]:
+        citation["keywords"] = keywords
+    else:
+        citation.pop("keywords")
 
     log.info(f"creating {datacite_file}")
     with open(datacite_file, "w") as f:
         yaml.dump(datacite, f)
+
+    log.info(f"creating {citation_file}")
+    with open(citation_file, "w") as f:
+        yaml.dump(citation, f)
 
     output_dir = ds_descr_file.parent.joinpath("derivatives", "bids2cite")
     output_dir.mkdir(exist_ok=True, parents=True)

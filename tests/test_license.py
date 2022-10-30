@@ -24,7 +24,7 @@ def test_update_license():
 
     (license_name, license_url) = update_license(bids_dir, ds_desc, skip_prompt=True)
 
-    assert license_name == "Creative Commons Zero 1.0 Public Domain Dedication"
+    assert license_name == "CC0-1.0"
     assert license_url == "https://creativecommons.org/publicdomain/zero/1.0/"
 
     assert bids_dir.joinpath("LICENSE").exists()

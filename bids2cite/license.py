@@ -43,13 +43,13 @@ def update_license(
 
     license_file_present = "LICENSE" in bids_dir.glob("LICENSE*")  # type: ignore
 
-    license_name = ds_desc.get("License")
+    license_name = ds_desc.get("License", "")
     license_url = ""
 
-    if license_name not in [None, ""]:
+    if license_name not in [""]:
 
-        if license_name in ["CC0", "cc0-1.0", "Creative Commons Zero"]:
-            license_name = "Creative Commons Zero 1.0 Public Domain Dedication"
+        if license_name.lower() in ["cc0", "cc0-1.0", "creative commons zero"]:
+            license_name = "CC0-1.0"
             license_url = "https://creativecommons.org/publicdomain/zero/1.0/"
 
             if not license_file_present:
@@ -60,9 +60,7 @@ def update_license(
             "CC-BY-NC-SA-4.0",
             "Attribution-NonCommercial-ShareAlike 4.0",
         ]:
-            license_name = """
-Creative Commons Attribution-NonCommercial-ShareAlike 4.0 Public Domain Dedication
-"""
+            license_name = "CC-BY-NC-SA-4.0"
             license_url = "https://creativecommons.org/licenses/by-nc-sa/4.0/"
             return license_name, license_url
 

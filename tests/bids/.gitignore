@@ -1,4 +1,5 @@
 datacite.yml
+CITATION.cff
 .bidsignore
 derivatives
 LICENSE

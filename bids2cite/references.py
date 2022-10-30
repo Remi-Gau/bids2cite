@@ -170,3 +170,19 @@ def get_reference_info_from_pmid(pmid: str) -> None | dict[str, Any]:
     else:
         log.warning(f"No reference matching pmid:{pmid}")
         return None
+
+
+def references_for_datacite(references: list[dict[str, str]]) -> list[str]:
+    """Return authors formatted for datacite files."""
+    return [x["citation"] for x in references]
+
+
+def references_for_citation(references: list[dict[str, str]]) -> list[dict[str, str]]:
+    """Return authors formatted for citation.cff files."""
+    tmp = []
+    for x in references:
+        value = x.get("id", " ")
+        if value.startswith("doi:"):
+            this_ref = {"type": "doi", "value": value.replace("doi:", "")}
+            tmp.append(this_ref)
+    return tmp
