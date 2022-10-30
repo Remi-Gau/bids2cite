@@ -22,7 +22,7 @@ from . import _version
 __version__ = _version.get_versions()["version"]
 
 from bids2cite.authors import update_authors, authors_for_desc, authors_for_citation
-from bids2cite.license import update_license
+from bids2cite.license import update_license, supported_licenses
 from bids2cite.references import (
     update_references,
     references_for_datacite,
@@ -138,8 +138,6 @@ def cli(argv: Any = sys.argv) -> None:
     """Execute the main script for CLI."""
     log = bids2cite_log(name="bids2datacite")
 
-    SUPPORTED_LICENSES = ["CC0-1.0"]
-
     parser = common_parser()
 
     args = parser.parse_args(argv[1:])
@@ -162,10 +160,12 @@ def cli(argv: Any = sys.argv) -> None:
         if not authors_file.exists():
             authors_file = None
 
-    if args.license and args.license not in SUPPORTED_LICENSES:
+    licenses = supported_licenses()
+    licenses_choices = list(licenses.keys())
+    if args.license and args.license not in licenses_choices:
         log.error(
             f"""License '{args.license}' not supported.
-        Supported types are {SUPPORTED_LICENSES}"""
+        Supported types are {licenses_choices}"""
         )
         sys.exit(1)
 
@@ -192,9 +192,11 @@ def bids2cite(
 
     log.info(f"bids_dir: {bids_dir}")
 
+    output_dir = bids_dir.joinpath("derivatives", "bids2cite")
+
     ds_descr_file = bids_dir.joinpath("dataset_description.json")
-    datacite_file = bids_dir.joinpath("datacite.yml")
-    citation_file = bids_dir.joinpath("CITATION.cff")
+    datacite_file = output_dir.joinpath("datacite.yml")
+    citation_file = output_dir.joinpath("CITATION.cff")
 
     yaml = ruamel.yaml.YAML()
     yaml.indent(mapping=2, sequence=4, offset=2)
@@ -251,7 +253,7 @@ def bids2cite(
 
     if license is not None:
         ds_desc["License"] = license
-    (license_name, license_url) = update_license(bids_dir, ds_desc, skip_prompt)
+    (license_name, license_url) = update_license(output_dir, ds_desc, skip_prompt)
     ds_desc["License"] = license_name
     datacite["license"]["name"] = license_name
     datacite["license"]["url"] = license_url
@@ -314,11 +316,12 @@ def common_parser() -> MuhParser:
         help="List of key words separated by commas to add to the citation file.",
         default="",
     )
+    licenses = supported_licenses()
+    licenses_choices = list(licenses.keys())
     parser.add_argument(
         "-l",
         "--license",
-        help="""License to add to choose from:
-                    - CC0-1.0""",
+        help=f"License to add to choose from: {licenses_choices}",
         default=None,
     )
     parser.add_argument(
@@ -330,10 +333,7 @@ def common_parser() -> MuhParser:
     parser.add_argument(
         "--authors-file",
         help=""".tsv file containing list of potential new authors with the columns:
-                    - first_name\n
-                    - last_name\n
-                    - ORCID (optional)\n
-                    - affiliation (optional)""",
+                first_name, last_name, ORCID (optional), affiliation (optional)""",
         default="",
     )
     parser.add_argument(

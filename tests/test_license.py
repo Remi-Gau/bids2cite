@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pytest
 from utils import get_test_dir
+from utils import license_file
 
 from bids2cite.license import add_license_file
 from bids2cite.license import identify_license
@@ -10,27 +11,30 @@ from bids2cite.license import update_license
 
 def test_add_license_file():
 
-    bids_dir = get_test_dir().joinpath("bids")
+    output_dir = get_test_dir().joinpath("bids", "derivatives", "bids2cite")
 
-    add_license_file("CC0", bids_dir)
+    add_license_file("PDDL-1.0", output_dir)
 
-    assert bids_dir.joinpath("LICENSE").exists()
-    bids_dir.joinpath("LICENSE").unlink(missing_ok=True)
+    assert license_file().exists()
+    license_file().unlink(missing_ok=True)
+
+    add_license_file("None", output_dir)
+    assert not license_file().exists()
 
 
 def test_update_license():
 
-    bids_dir = get_test_dir().joinpath("bids")
+    output_dir = get_test_dir().joinpath("bids", "derivatives", "bids2cite")
 
     ds_desc = {"License": "CC0"}
 
-    (license_name, license_url) = update_license(bids_dir, ds_desc, skip_prompt=True)
+    (license_name, license_url) = update_license(output_dir, ds_desc, skip_prompt=True)
 
     assert license_name == "CC0-1.0"
     assert license_url == "https://creativecommons.org/publicdomain/zero/1.0/"
 
-    assert bids_dir.joinpath("LICENSE").exists()
-    bids_dir.joinpath("LICENSE").unlink(missing_ok=True)
+    assert license_file().exists()
+    license_file().unlink(missing_ok=True)
 
 
 @pytest.mark.parametrize(

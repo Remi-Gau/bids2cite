@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from utils import get_test_dir
+from utils import license_file
 
 from bids2cite.bids2cite import bids2cite
 from bids2cite.bids2cite import update_bidsignore
@@ -45,7 +46,9 @@ def test_bids2cite() -> None:
     assert bidsignore.exists()
     bidsignore.unlink(missing_ok=True)
 
-    assert bids_dir.joinpath("LICENSE").exists()
-    bids_dir.joinpath("LICENSE").unlink(missing_ok=True)
+    assert license_file().exists()
+    license_file().unlink(missing_ok=True)
 
-    bids_dir.joinpath("datacite.yml").unlink(missing_ok=True)
+    datacite = bids_dir.joinpath("derivatives", "bids2cite", "datacite.yml")
+    assert datacite.exists()
+    datacite.unlink(missing_ok=True)

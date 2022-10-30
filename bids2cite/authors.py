@@ -136,6 +136,7 @@ def update_authors(
 ) -> list[dict[str, str | None]]:
     """Update authors."""
     authors: list[dict[str, str | None]] = []
+    log.info("update authors")
 
     if "Authors" in ds_desc:
         authors.extend(parse_author(author) for author in ds_desc["Authors"])

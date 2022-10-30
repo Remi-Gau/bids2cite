@@ -50,7 +50,8 @@ clean-test: ## remove test and coverage artifacts
 	rm -f tests/bids/.bidsignore
 	rm -f tests/bids/datacite.yml
 	rm -f tests/bids/LICENSE
-	rm -f tests/bids/derivatives
+	rm -f tests/bids/CITATION.cff
+	rm -rf tests/bids/derivatives
 
 ## INSTALL
 
@@ -108,6 +109,6 @@ test-cli:
 		--skip-prompt \
 		-vv \
 		--keywords "foo, bar, me" \
-		--license "CC0-1.0" \
+		--license "PDDL-1.0" \
 		--description "this is the description of my dataset"
 	make clean-test
