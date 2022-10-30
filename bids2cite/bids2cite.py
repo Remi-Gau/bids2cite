@@ -195,10 +195,9 @@ def bids2cite(
     log.info(f"bids_dir: {bids_dir}")
 
     output_dir = bids_dir.joinpath("derivatives", "bids2cite")
+    output_dir.mkdir(exist_ok=True, parents=True)
 
     ds_descr_file = bids_dir.joinpath("dataset_description.json")
-    datacite_file = output_dir.joinpath("datacite.yml")
-    citation_file = output_dir.joinpath("CITATION.cff")
 
     yaml = ruamel.yaml.YAML()
     yaml.indent(mapping=2, sequence=4, offset=2)
@@ -234,56 +233,62 @@ def bids2cite(
     }
 
     description = update_description(description, skip_prompt)
-    datacite["description"] = description
-    citation["message"] = description
-    if description == "":
-        citation["message"] = "TODO"
 
     authors = update_authors(ds_desc, skip_prompt, authors_file)
-    datacite["authors"] = authors
-    ds_desc["authors"] = authors_for_desc(authors)
-    citation["authors"] = authors_for_citation(authors)
 
     references = update_references(ds_desc, skip_prompt)
-    datacite["references"] = references
-    ds_desc["ReferencesAndLinks"] = references_for_datacite(references)
-    citation["identifiers"] = references_for_citation(references)
 
     funding = update_funding(ds_desc, skip_prompt)
-    datacite["funding"] = funding
-    ds_desc["Funding"] = funding
 
     if license is not None:
         ds_desc["License"] = license
     (license_name, license_url) = update_license(output_dir, ds_desc, skip_prompt)
-    ds_desc["License"] = license_name
-    datacite["license"]["name"] = license_name
-    datacite["license"]["url"] = license_url
-    citation["license"] = license_name
 
     keywords = update_keywords(keywords, skip_prompt)
-    datacite["keywords"] = keywords
-    if keywords not in [None, []]:
-        citation["keywords"] = keywords
-    else:
-        citation.pop("keywords")
 
-    log.info(f"creating {datacite_file}")
-    with open(datacite_file, "w") as f:
-        yaml.dump(datacite, f)
+    update_bidsignore(bids_dir)
 
-    log.info(f"creating {citation_file}")
-    with open(citation_file, "w") as f:
-        yaml.dump(citation, f)
+    """dataset_description.json"""
+    ds_desc["authors"] = authors_for_desc(authors)
+    ds_desc["ReferencesAndLinks"] = references_for_datacite(references)
+    ds_desc["Funding"] = funding
+    ds_desc["License"] = license_name
 
-    output_dir = ds_descr_file.parent.joinpath("derivatives", "bids2cite")
-    output_dir.mkdir(exist_ok=True, parents=True)
     output_file = output_dir.joinpath("dataset_description.json")
     log.info(f"updating {output_file}")
     with open(output_file, "w") as f:
         json.dump(ds_desc, f, indent=4)
 
-    update_bidsignore(bids_dir)
+    """datacite.yml"""
+    datacite["description"] = description
+    datacite["authors"] = authors
+    datacite["references"] = references
+    datacite["funding"] = funding
+    datacite["license"]["name"] = license_name
+    datacite["license"]["url"] = license_url
+    datacite["keywords"] = keywords
+
+    datacite_file = output_dir.joinpath("datacite.yml")
+    log.info(f"creating {datacite_file}")
+    with open(datacite_file, "w") as f:
+        yaml.dump(datacite, f)
+
+    """CITATION.cff"""
+    if keywords not in [None, []]:
+        citation["keywords"] = keywords
+    else:
+        citation.pop("keywords")
+    citation["license"] = license_name
+    citation["authors"] = authors_for_citation(authors)
+    citation["message"] = description
+    if description == "":
+        citation["message"] = "TODO"
+    citation["identifiers"] = references_for_citation(references)
+
+    citation_file = output_dir.joinpath("CITATION.cff")
+    log.info(f"creating {citation_file}")
+    with open(citation_file, "w") as f:
+        yaml.dump(citation, f)
 
     citation = create_citation(infile=citation_file, url=None)
     validate_or_write_output(
