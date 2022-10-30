@@ -188,7 +188,7 @@ def bids2cite(
     license: str | None = None,
     skip_prompt: bool = False,
     authors_file: Path | None = None,
-) -> None:
+) -> None:  # sourcery skip: merge-dict-assign
     """Create a datacite.yml file for a BIDS dataset."""
     log = bids2cite_log(name="bids2datacite")
 
@@ -209,29 +209,6 @@ def bids2cite(
     with open(ds_descr_file) as f:
         ds_desc: dict[str, Any] = json.load(f)
 
-    datacite: dict[str, Any] = {
-        "authors": [],
-        "title": ds_desc["Name"],
-        "description": "",
-        "keywords": [],
-        "license": {"name": "", "url": ""},
-        "resourcetype": "Dataset",
-        "references": [],
-        "templateversion": 1.2,
-        "funding": [],
-    }
-
-    citation: dict[str, Any] = {
-        "authors": [],
-        "title": ds_desc["Name"],
-        "message": "",
-        "keywords": [],
-        "license": "",
-        "type": "dataset",
-        "identifiers": [],
-        "cff-version": "1.2.0",
-    }
-
     description = update_description(description, skip_prompt)
 
     authors = update_authors(ds_desc, skip_prompt, authors_file)
@@ -249,6 +226,7 @@ def bids2cite(
     update_bidsignore(bids_dir)
 
     """dataset_description.json"""
+
     ds_desc["authors"] = authors_for_desc(authors)
     ds_desc["ReferencesAndLinks"] = references_for_datacite(references)
     ds_desc["Funding"] = funding
@@ -260,6 +238,19 @@ def bids2cite(
         json.dump(ds_desc, f, indent=4)
 
     """datacite.yml"""
+
+    datacite: dict[str, Any] = {
+        "authors": [],
+        "title": ds_desc["Name"],
+        "description": "",
+        "keywords": [],
+        "license": {"name": "", "url": ""},
+        "resourcetype": "Dataset",
+        "references": [],
+        "templateversion": 1.2,
+        "funding": [],
+    }
+
     datacite["description"] = description
     datacite["authors"] = authors
     datacite["references"] = references
@@ -274,10 +265,19 @@ def bids2cite(
         yaml.dump(datacite, f)
 
     """CITATION.cff"""
+
+    citation: dict[str, Any] = {
+        "authors": [],
+        "title": ds_desc["Name"],
+        "message": "",
+        "license": "",
+        "type": "dataset",
+        "identifiers": [],
+        "cff-version": "1.2.0",
+    }
+
     if keywords not in [None, []]:
         citation["keywords"] = keywords
-    else:
-        citation.pop("keywords")
     citation["license"] = license_name
     citation["authors"] = authors_for_citation(authors)
     citation["message"] = description
