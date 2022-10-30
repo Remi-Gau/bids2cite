@@ -64,14 +64,14 @@ bids2cite "tests/bids" \
     --keywords "foo, bar, me" \
     --description "this is the description of my dataset" \
     --authors_file "inputs/authors.tsv" \
-    --skip-prompt false \
-    --verbosity INFO
+    --license "CC0-1.0" \
+    --verbose
 ```
 
-`--keywords` and `--description` allow you to pass keywords and description to
-add to the citation file.
+`--keywords`, `--license` and `--description` allow you to pass
+keywords, license and description to add to the citation file.
 
-`--skip-prompt` is set to `false` (default) to prompt you for information to add
+With `--skip-prompt` you will skip the prompt to add information manually
 to the citation file.
 
 `--authors_file` points to a TSV file containing potential authors to add
@@ -103,7 +103,7 @@ bids2cite --help
 If you need to incorporate this into a python script you can do like this:
 
 ```python
-from bids2cite.bids2cite import main
+from bids2cite.bids2cite import bids2cite
 from pathlib import Path
 
 path_to_bids_dataset = Path("path/to/bids/dataset")

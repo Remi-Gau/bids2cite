@@ -50,6 +50,7 @@ clean-test: ## remove test and coverage artifacts
 	rm -f tests/bids/.bidsignore
 	rm -f tests/bids/datacite.yml
 	rm -f tests/bids/LICENSE
+	rm -f tests/bids/derivatives
 
 ## INSTALL
 
@@ -104,8 +105,9 @@ test: ## run tests with pytest
 
 test-cli:
 	bids2cite tests/bids \
-		--skip-prompt true \
-		--verbosity DEBUG \
+		--skip-prompt \
+		-vv \
 		--keywords "foo, bar, me" \
+		--license "CC0-1.0" \
 		--description "this is the description of my dataset"
 	make clean-test

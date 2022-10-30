@@ -162,7 +162,7 @@ def cli(argv: Any = sys.argv) -> None:
         if not authors_file.exists():
             authors_file = None
 
-    if args.license not in SUPPORTED_LICENSES:
+    if args.license and args.license not in SUPPORTED_LICENSES:
         log.error(
             f"""License '{args.license}' not supported.
         Supported types are {SUPPORTED_LICENSES}"""
