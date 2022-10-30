@@ -34,7 +34,7 @@ def supported_licenses() -> dict[str, dict[str, str | list[str | None]]]:
         },
         "PDDL-1.0": {
             "name": "PDDL-1.0",
-            "values": ["pddl-1.0"],
+            "values": ["pddl-1.0", "pddl", "public domain dedication and license 1.0"],
             "url": "https://opendatacommons.org/licenses/pddl/1-0/",
             "api_url": "https://opendatacommons.org/licenses/pddl/pddl-10.txt",
         },

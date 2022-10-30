@@ -27,14 +27,14 @@ def test_update_license():
     bids_dir = get_test_dir().joinpath("bids")
     output_dir = get_test_dir().joinpath("bids", "derivatives", "bids2cite")
 
-    ds_desc = {"License": "CC0"}
+    ds_desc = {"License": "PDDL"}
 
     (license_name, license_url) = update_license(
         bids_dir, output_dir, ds_desc, skip_prompt=True
     )
 
-    assert license_name == "CC0-1.0"
-    assert license_url == "https://creativecommons.org/publicdomain/zero/1.0/"
+    assert license_name == "PDDL-1.0"
+    assert license_url == "https://opendatacommons.org/licenses/pddl/1-0/"
 
     assert license_file().exists()
     license_file().unlink(missing_ok=True)
