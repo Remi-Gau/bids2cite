@@ -99,7 +99,9 @@ servedocs: docs ## compile the docs watching for changes
 ## TESTS
 
 coverage: ## use coverage
-	pytest --cov bids2cite
+	coverage erase
+	coverage run --source bids2cite -m pytest
+	coverage report -m
 
 test: ## run tests with pytest
 	pytest

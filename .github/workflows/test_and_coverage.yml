@@ -31,7 +31,10 @@ jobs:
         pip install .[test]
 
     - name: Run tests and generate coverage report
-      run: python -m pytest --cov-report=xml
+      run: |
+        coverage erase
+        coverage run --source bids2cite -m pytest
+        coverage xml
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
