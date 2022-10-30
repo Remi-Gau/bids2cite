@@ -28,7 +28,13 @@ from bids2cite.references import (
     references_for_datacite,
     references_for_citation,
 )
-from bids2cite.utils import bids2cite_log, print_unordered_list, prompt_format
+from bids2cite.utils import (
+    bids2cite_log,
+    print_unordered_list,
+    prompt_format,
+    log_levels,
+    default_log_level,
+)
 
 bids_dir = Path(__file__).parent.joinpath("tests", "bids")
 
@@ -132,13 +138,20 @@ def cli(argv: Any = sys.argv) -> None:
     """Execute the main script for CLI."""
     log = bids2cite_log(name="bids2datacite")
 
+    SUPPORTED_LICENSES = ["CC0-1.0"]
+
     parser = common_parser()
 
     args = parser.parse_args(argv[1:])
 
-    skip_prompt = args.skip_prompt == "true"
-
-    log.setLevel(args.verbosity)
+    # https://stackoverflow.com/a/53293042/14223310
+    log_level = log_levels().index(default_log_level())
+    # For each "-v" flag, adjust the logging verbosity accordingly
+    # making sure to clamp off the value from 0 to 4, inclusive of both
+    for adjustment in args.log_level or ():
+        log_level = min(len(log_levels()) - 1, max(log_level + adjustment, 0))
+    log_level_name = log_levels()[log_level]
+    log.setLevel(log_level_name)
 
     tmp = args.keywords.split(",") if args.keywords else []
     keywords = [x.strip() for x in tmp]
@@ -149,11 +162,19 @@ def cli(argv: Any = sys.argv) -> None:
         if not authors_file.exists():
             authors_file = None
 
+    if args.license not in SUPPORTED_LICENSES:
+        log.error(
+            f"""License '{args.license}' not supported.
+        Supported types are {SUPPORTED_LICENSES}"""
+        )
+        sys.exit(1)
+
     bids2cite(
         bids_dir=Path(args.bids_dir).resolve(),
         description=args.description,
         keywords=keywords,
-        skip_prompt=skip_prompt,
+        license=args.license,
+        skip_prompt=args.skip_prompt,
         authors_file=authors_file,
     )
 
@@ -162,6 +183,7 @@ def bids2cite(
     bids_dir: Path,
     description: str | None = None,
     keywords: list[str] | None = None,
+    license: str | None = None,
     skip_prompt: bool = False,
     authors_file: Path | None = None,
 ) -> None:
@@ -227,6 +249,8 @@ def bids2cite(
     datacite["funding"] = funding
     ds_desc["Funding"] = funding
 
+    if license is not None:
+        ds_desc["License"] = license
     (license_name, license_url) = update_license(bids_dir, ds_desc, skip_prompt)
     ds_desc["License"] = license_name
     datacite["license"]["name"] = license_name
@@ -282,18 +306,26 @@ def common_parser() -> MuhParser:
         """,
     )
     parser.add_argument(
-        "--description", help="Description to add to the dataset.", default=""
+        "-d", "--description", help="Description to add to the dataset.", default=""
     )
     parser.add_argument(
+        "-k",
         "--keywords",
         help="List of key words separated by commas to add to the citation file.",
         default="",
     )
     parser.add_argument(
+        "-l",
+        "--license",
+        help="""License to add to choose from:
+                    - CC0-1.0""",
+        default=None,
+    )
+    parser.add_argument(
+        "-s",
         "--skip-prompt",
-        help="Set to 'false' if you want to not use the prompt interface.",
-        choices=["true", "false"],
-        default="false",
+        help="If you do not want to use the prompt interface.",
+        action="store_true",
     )
     parser.add_argument(
         "--authors-file",
@@ -305,10 +337,11 @@ def common_parser() -> MuhParser:
         default="",
     )
     parser.add_argument(
-        "--verbosity",
-        help="One of: DEBUG, INFO, WARNING",
-        choices=["DEBUG", "INFO", "WARNING"],
-        default="INFO",
+        "--verbose",
+        "-v",
+        dest="log_level",
+        action="append_const",
+        const=-1,
     )
     parser.add_argument(
         "--version",

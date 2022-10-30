@@ -36,13 +36,21 @@ def bids2cite_log(name: str | None = None) -> logging.Logger:
 
     FORMAT = "bids2datacite - %(asctime)s - %(levelname)s - %(message)s"
 
-    log_level = "INFO"
-
     if not name:
         name = "rich"
 
     logging.basicConfig(
-        level=log_level, format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
+        level=default_log_level(), format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
     )
 
     return logging.getLogger(name)
+
+
+def default_log_level() -> str:
+    """Return default log level."""
+    return "WARNING"
+
+
+def log_levels() -> list[str]:
+    """Return a list of log levels."""
+    return ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]

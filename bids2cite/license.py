@@ -78,7 +78,7 @@ def identify_license(ds_desc: dict[str, Any]) -> tuple[str, str]:
         if name.lower() in ["cc0", "cc0-1.0", "creative commons zero"]:
             name = "CC0-1.0"
             url = "https://creativecommons.org/publicdomain/zero/1.0/"
-            log.info(f"License {name} found.")
+            log.debug(f"License {name} found.")
 
         elif name in [
             "CC-BY-NC-SA-4.0",
@@ -86,7 +86,7 @@ def identify_license(ds_desc: dict[str, Any]) -> tuple[str, str]:
         ]:
             name = "CC-BY-NC-SA-4.0"
             url = "https://creativecommons.org/licenses/by-nc-sa/4.0/"
-            log.info(f"License {name} found.")
+            log.debug(f"License {name} found.")
 
         else:
             log.warning(f"License {name} not recognized.")

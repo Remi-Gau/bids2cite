@@ -38,6 +38,7 @@ def test_bids2cite() -> None:
         description="add something",
         keywords=["foo", "bar"],
         skip_prompt=True,
+        license="CC0-1.0",
     )
 
     bidsignore = bids_dir.joinpath(".bidsignore")
