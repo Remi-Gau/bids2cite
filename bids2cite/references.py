@@ -43,8 +43,6 @@ def get_reference_id(reference: str) -> str:
 
 def get_reference_details(reference: str) -> dict[str, str]:
     """Get reference details."""
-    this_reference = {"citation": reference}
-
     info = None
 
     ref_id = get_reference_id(reference)
@@ -53,13 +51,12 @@ def get_reference_details(reference: str) -> dict[str, str]:
     elif ref_id.startswith("doi"):
         info = get_reference_info_from_doi(ref_id.split("doi:")[1])
 
+    this_reference = {"citation": reference, "id": ref_id, "reftype": "IsSupplementTo"}
+
     if info is not None:
-        this_reference["id"] = ref_id
         this_reference[
             "citation"
         ] = f"""{', '.join(info['authors'])}; {info['title']}; {info['journal']}; {info['year']}; {ref_id}"""
-
-    this_reference["reftype"] = "IsSupplementTo"
 
     return this_reference
 
@@ -113,9 +110,13 @@ def update_references(
     return references
 
 
-def get_reference_info_from_doi(doi: str) -> dict[str, Any]:
+def get_reference_info_from_doi(doi: str) -> dict[str, Any] | None:
     """Get reference info from DOI."""
-    content = crossref_commons.retrieval.get_publication_as_json(doi)
+    try:
+        content = crossref_commons.retrieval.get_publication_as_json(doi)
+    except Exception:
+        log.warning(f"Could not get a reference for doi:{doi}")
+        return None
 
     authors = []
     for i, author in enumerate(content["author"]):
