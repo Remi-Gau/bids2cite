@@ -171,8 +171,16 @@ def cli(argv: Any = sys.argv) -> None:
         )
         sys.exit(1)
 
+    if args.output_format not in ["datacite", "citation"]:
+        log.error(
+            f"""Format '{args.output_format}' not supported.
+        Supported types are 'datacite' and 'citation'"""
+        )
+        sys.exit(1)
+
     bids2cite(
         bids_dir=Path(args.bids_dir).resolve(),
+        output_format=args.output_format,
         description=args.description,
         keywords=keywords,
         license=args.license,
@@ -183,6 +191,7 @@ def cli(argv: Any = sys.argv) -> None:
 
 def bids2cite(
     bids_dir: Path,
+    output_format: str,
     description: str | None = None,
     keywords: list[str] | None = None,
     license: str | None = None,
@@ -238,62 +247,62 @@ def bids2cite(
         json.dump(ds_desc, f, indent=4)
 
     """datacite.yml"""
+    if output_format == "datacite":
+        datacite: dict[str, Any] = {
+            "authors": [],
+            "title": ds_desc["Name"],
+            "description": "",
+            "keywords": [],
+            "license": {"name": "", "url": ""},
+            "resourcetype": "Dataset",
+            "references": [],
+            "templateversion": 1.2,
+            "funding": [],
+        }
 
-    datacite: dict[str, Any] = {
-        "authors": [],
-        "title": ds_desc["Name"],
-        "description": "",
-        "keywords": [],
-        "license": {"name": "", "url": ""},
-        "resourcetype": "Dataset",
-        "references": [],
-        "templateversion": 1.2,
-        "funding": [],
-    }
+        datacite["description"] = description
+        datacite["authors"] = authors
+        datacite["references"] = references
+        datacite["funding"] = funding
+        datacite["license"]["name"] = license_name
+        datacite["license"]["url"] = license_url
+        datacite["keywords"] = keywords
 
-    datacite["description"] = description
-    datacite["authors"] = authors
-    datacite["references"] = references
-    datacite["funding"] = funding
-    datacite["license"]["name"] = license_name
-    datacite["license"]["url"] = license_url
-    datacite["keywords"] = keywords
-
-    datacite_file = output_dir.joinpath("datacite.yml")
-    log.info(f"creating {datacite_file}")
-    with open(datacite_file, "w") as f:
-        yaml.dump(datacite, f)
+        datacite_file = output_dir.joinpath("datacite.yml")
+        log.info(f"creating {datacite_file}")
+        with open(datacite_file, "w") as f:
+            yaml.dump(datacite, f)
 
     """CITATION.cff"""
+    if output_format == "citation":
+        citation: dict[str, Any] = {
+            "authors": [],
+            "title": ds_desc["Name"],
+            "message": "",
+            "license": "",
+            "type": "dataset",
+            "identifiers": [],
+            "cff-version": "1.2.0",
+        }
 
-    citation: dict[str, Any] = {
-        "authors": [],
-        "title": ds_desc["Name"],
-        "message": "",
-        "license": "",
-        "type": "dataset",
-        "identifiers": [],
-        "cff-version": "1.2.0",
-    }
+        if keywords not in [None, []]:
+            citation["keywords"] = keywords
+        citation["license"] = license_name
+        citation["authors"] = authors_for_citation(authors)
+        citation["message"] = description
+        if description == "":
+            citation["message"] = "TODO"
+        citation["identifiers"] = references_for_citation(references)
 
-    if keywords not in [None, []]:
-        citation["keywords"] = keywords
-    citation["license"] = license_name
-    citation["authors"] = authors_for_citation(authors)
-    citation["message"] = description
-    if description == "":
-        citation["message"] = "TODO"
-    citation["identifiers"] = references_for_citation(references)
+        citation_file = output_dir.joinpath("CITATION.cff")
+        log.info(f"creating {citation_file}")
+        with open(citation_file, "w") as f:
+            yaml.dump(citation, f)
 
-    citation_file = output_dir.joinpath("CITATION.cff")
-    log.info(f"creating {citation_file}")
-    with open(citation_file, "w") as f:
-        yaml.dump(citation, f)
-
-    citation = create_citation(infile=citation_file, url=None)
-    validate_or_write_output(
-        outfile=None, outputformat=None, validate_only=True, citation=citation
-    )
+        citation = create_citation(infile=citation_file, url=None)
+        validate_or_write_output(
+            outfile=None, outputformat=None, validate_only=True, citation=citation
+        )
 
 
 class MuhParser(argparse.ArgumentParser):
@@ -318,6 +327,13 @@ def common_parser() -> MuhParser:
         help="""
         The directory with the input dataset formatted according to the BIDS standard.
         """,
+    )
+    parser.add_argument(
+        "-o",
+        "--output-format",
+        help="""Choose the output format between 'citation' for CITATION.cff
+        and 'datacite' for datacite.yml.""",
+        default="datacite",
     )
     parser.add_argument(
         "-d", "--description", help="Description to add to the dataset.", default=""
@@ -359,7 +375,7 @@ def common_parser() -> MuhParser:
         "--version",
         action="version",
         help="show program's version number and exit",
-        version=f"\nbids2cite version {__version__}\n",
+        version=f"{__version__}",
     )
 
     return parser
