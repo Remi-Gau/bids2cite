@@ -5,8 +5,6 @@
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/Remi-Gau/bids2cite/main.svg)](https://results.pre-commit.ci/latest/github/Remi-Gau/bids2cite/main)
 [![Documentation Status](https://readthedocs.org/projects/bids2cite/badge/?version=latest)](https://bids2cite.readthedocs.io/en/latest/?badge=latest)
 
-<img src="docs/images/bids2cite_logo.png" alt="logo" style="width:200px;"/>
-
 # bids2cite
 
 Create a citation file for a BIDS dataset based on its
