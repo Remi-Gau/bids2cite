@@ -209,13 +209,12 @@ def choose_from_new_authors(authors_file: Path, author_idx: int) -> dict[str, st
 
 def manually_add_author() -> str:
     """Manually add author."""
-    author = Prompt.ask(
+    return Prompt.ask(
         prompt_format(
             """Please enter a new author
 (for example: 'firstname surname' or 'ORCID:0000-0002-9120-8098')"""
         )
     )
-    return author
 
 
 def authors_for_desc(authors: list[dict[str, str | None]]) -> list[str]:

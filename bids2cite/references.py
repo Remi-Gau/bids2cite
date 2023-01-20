@@ -36,9 +36,7 @@ def get_reference_id(reference: str) -> str:
     if ref_id == "":
         log.warning(f"No PMID or DOI found in:\n{reference}")
 
-    ref_id = ref_id.strip()
-
-    return ref_id
+    return ref_id.strip()
 
 
 def get_reference_details(reference: str) -> dict[str, str]:
