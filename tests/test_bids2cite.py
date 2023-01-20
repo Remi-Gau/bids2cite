@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 from utils import get_test_dir
 from utils import license_file
 
@@ -7,43 +10,59 @@ from bids2cite.bids2cite import bids2cite
 from bids2cite.bids2cite import update_bidsignore
 
 
+def bids_dir() -> Path:
+    return get_test_dir().joinpath("bids")
+
+
+def bidsignore() -> Path:
+    return bids_dir().joinpath(".bidsignore")
+
+
+def datacite() -> Path:
+    return bids_dir().joinpath("derivatives", "bids2cite", "datacite.yml")
+
+
+def citation() -> Path:
+    return bids_dir().joinpath("derivatives", "bids2cite", "CITATION.cff")
+
+
+def dataset_description() -> Path:
+    return bids_dir().joinpath("derivatives", "bids2cite", "dataset_description.json")
+
+
+def cleanup() -> None:
+    bidsignore().unlink(missing_ok=True)
+    datacite().unlink(missing_ok=True)
+    citation().unlink(missing_ok=True)
+    dataset_description().unlink(missing_ok=True)
+
+
 def test_update_bidsignore() -> None:
 
-    bids_dir = get_test_dir().joinpath("bids")
+    cleanup()
 
-    bidsignore = bids_dir.joinpath(".bidsignore")
-
-    bidsignore.unlink(missing_ok=True)
-    update_bidsignore(bids_dir=bids_dir)
-    assert bidsignore.exists()
-    with bidsignore.open("r") as f:
+    update_bidsignore(bids_dir=bids_dir())
+    assert bidsignore().exists()
+    with bidsignore().open("r") as f:
         content = f.read()
     assert "datacite.yml" in content
 
-    bidsignore.unlink(missing_ok=True)
-    with bidsignore.open("w") as f:
+    cleanup()
+    with bidsignore().open("w") as f:
         f.write("foo")
-    update_bidsignore(bids_dir=bids_dir)
-    with bidsignore.open("r") as f:
+    update_bidsignore(bids_dir=bids_dir())
+    with bidsignore().open("r") as f:
         content = f.read()
     assert "datacite.yml" in content
 
-    bidsignore.unlink(missing_ok=True)
+    cleanup()
 
 
 def test_bids2cite_datacite() -> None:
 
+    cleanup()
+
     bids_dir = get_test_dir().joinpath("bids")
-
-    bidsignore = bids_dir.joinpath(".bidsignore")
-
-    datacite = bids_dir.joinpath("derivatives", "bids2cite", "datacite.yml")
-
-    citation = bids_dir.joinpath("derivatives", "bids2cite", "CITATION.cff")
-
-    bidsignore.unlink(missing_ok=True)
-    datacite.unlink(missing_ok=True)
-    citation.unlink(missing_ok=True)
 
     bids2cite(
         bids_dir=bids_dir,
@@ -54,30 +73,34 @@ def test_bids2cite_datacite() -> None:
         license="PDDL-1.0",
     )
 
-    assert bidsignore.exists()
+    assert bidsignore().exists()
     assert license_file().exists()
-    assert datacite.exists()
-    assert not citation.exists()
+    assert dataset_description().exists()
+    assert datacite().exists()
+    assert not citation().exists()
 
-    bidsignore.unlink(missing_ok=True)
-    datacite.unlink(missing_ok=True)
-    citation.unlink(missing_ok=True)
-    license_file().unlink(missing_ok=True)
+    with dataset_description().open("r") as f:
+
+        content = json.load(f)
+
+        assert content.get("authors") is None
+        print(content.get("Authors"))
+        for x in content.get("Authors"):
+            assert x not in ("")
+            assert not x.isspace()
+
+        for x in content.get("ReferencesAndLinks"):
+            assert x not in ("")
+            assert not x.isspace()
+
+    cleanup()
 
 
 def test_bids2cite_citation() -> None:
 
     bids_dir = get_test_dir().joinpath("bids")
 
-    bidsignore = bids_dir.joinpath(".bidsignore")
-
-    datacite = bids_dir.joinpath("derivatives", "bids2cite", "datacite.yml")
-
-    citation = bids_dir.joinpath("derivatives", "bids2cite", "CITATION.cff")
-
-    bidsignore.unlink(missing_ok=True)
-    datacite.unlink(missing_ok=True)
-    citation.unlink(missing_ok=True)
+    cleanup()
 
     bids2cite(
         bids_dir=bids_dir,
@@ -88,12 +111,10 @@ def test_bids2cite_citation() -> None:
         license="PDDL-1.0",
     )
 
-    assert bidsignore.exists()
+    assert bidsignore().exists()
     assert license_file().exists()
-    assert not datacite.exists()
-    assert citation.exists()
+    assert dataset_description().exists()
+    assert not datacite().exists()
+    assert citation().exists()
 
-    bidsignore.unlink(missing_ok=True)
-    datacite.unlink(missing_ok=True)
-    citation.unlink(missing_ok=True)
-    license_file().unlink(missing_ok=True)
+    cleanup()

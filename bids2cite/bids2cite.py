@@ -238,7 +238,7 @@ def bids2cite(
 
     """dataset_description.json"""
 
-    ds_desc["authors"] = authors_for_desc(authors)
+    ds_desc["Authors"] = authors_for_desc(authors)
     ds_desc["ReferencesAndLinks"] = references_for_datacite(references)
     ds_desc["Funding"] = funding
     ds_desc["License"] = license_name

@@ -3,6 +3,8 @@
     "BIDSVersion": "1.6.0",
     "DatasetType": "raw",
     "Authors": [
+        "",
+        " ",
         "Paul Broca",
         "Carl Wernicke",
         "Remi Gau, ORCID:0000-0002-1535-9767"
@@ -18,6 +20,8 @@
         "Army Human Research Protections Office (Protocol ARL-20098-10051, ARL 12-040, and ARL 12-041)"
     ],
     "ReferencesAndLinks": [
+        "",
+        " ",
         "Gau R, Noble S, Heuer K, Bottenhorn KL, Bilgin IP, et al.; Brainhack: Developing a culture of open, inclusive, community-driven neuroscience.; Neuron; 2021; pmid:33932337",
         "C\u00e9sar, Caballero-Gaudes, Stefano, Moia, Puja, Panwar, Peter A., Bandettini, Javier, Gonzalez-Castillo, et al.; A deconvolution algorithm for multi-echo functional MRI: Multi-echo Sparse Paradigm Free Mapping; NeuroImage; 2019; doi:10.1016/j.neuroimage.2019.116081"
     ],

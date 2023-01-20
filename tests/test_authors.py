@@ -54,6 +54,7 @@ def test_parse_author_orcid():
         ("   Bob,  van der  Bob  ", "Bob", "van der Bob"),
         ("Bob", "Bob", ""),
         ("Bob  ", "Bob", ""),
+        ("", None, None),
     ],
 )
 def test_parse_author(author, firstname, lastname):
