@@ -80,8 +80,18 @@ def test_bids2cite_datacite() -> None:
     assert not citation().exists()
 
     with dataset_description().open("r") as f:
+
         content = json.load(f)
+
         assert content.get("authors") is None
+        print(content.get("Authors"))
+        for x in content.get("Authors"):
+            assert x not in ("")
+            assert not x.isspace()
+
+        for x in content.get("ReferencesAndLinks"):
+            assert x not in ("")
+            assert not x.isspace()
 
     cleanup()
 

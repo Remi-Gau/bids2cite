@@ -100,7 +100,7 @@ def update_references(
 (for example: 'doi:10.1016/j.neuroimage.2019.116081' or 'pmid:12345678')"""
             )
         )
-        this_reference = get_reference_details(reference)
+        this_reference = reference
 
         if "id" in this_reference:
             references.append(this_reference)
@@ -175,7 +175,11 @@ def get_reference_info_from_pmid(pmid: str) -> None | dict[str, Any]:
 
 def references_for_datacite(references: list[dict[str, str]]) -> list[str]:
     """Return authors formatted for datacite files."""
-    return [x["citation"] for x in references]
+    return [
+        x["citation"]
+        for x in references
+        if ((x["citation"] not in ("")) and (not x["citation"].isspace()))
+    ]
 
 
 def references_for_citation(references: list[dict[str, str]]) -> list[dict[str, str]]:

@@ -83,6 +83,8 @@ def parse_author(author: str) -> dict[str, str | None]:
         "id": None,
     }
 
+    if author in (""):
+        return {"firstname": None, "lastname": None}
     if "orcid:" in author.lower():
         if author_info := get_author_info_from_orcid(author.split(":")[1]):
             return author_info
@@ -131,6 +133,11 @@ def display_new_authors(authors_file: Path | None = None) -> int:
         return 0
 
 
+def rm_empty_authors(authors: list[dict[str, str | None]]) -> list[dict[str, str | None]]:
+    """Remove empty authors."""
+    return [x for x in authors if x["firstname"] is not None]
+
+
 def update_authors(
     ds_desc: dict[str, Any], skip_prompt: bool = False, authors_file: Path | None = None
 ) -> list[dict[str, str | None]]:
@@ -139,10 +146,13 @@ def update_authors(
     log.info("update authors")
 
     if "Authors" in ds_desc:
-        authors.extend(parse_author(author) for author in ds_desc["Authors"])
+        desc_authors = [
+            x for x in ds_desc["Authors"] if x not in (None, "") or not x.isspace()
+        ]
+        authors.extend(parse_author(author) for author in desc_authors)
 
     if skip_prompt:
-        return authors
+        return rm_empty_authors(authors)
 
     add_authors = "yes"
 
@@ -181,7 +191,7 @@ def update_authors(
             author = manually_add_author()
             authors.append(parse_author(author))
 
-    return authors
+    return rm_empty_authors(authors)
 
 
 def choose_from_new_authors(authors_file: Path, author_idx: int) -> dict[str, str | None]:
