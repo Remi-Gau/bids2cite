@@ -2,7 +2,7 @@ cff-version: 1.2.0
 
 title: "bids2cite"
 
-version: 0.1.0
+version: 0.2.0
 
 abstract:
   "Adds a datacite file to a BIDS dataset."
