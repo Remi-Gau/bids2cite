@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 from utils import get_test_dir
 from utils import license_file
@@ -9,23 +10,23 @@ from bids2cite.bids2cite import bids2cite
 from bids2cite.bids2cite import update_bidsignore
 
 
-def bids_dir():
+def bids_dir() -> Path:
     return get_test_dir().joinpath("bids")
 
 
-def bidsignore():
+def bidsignore() -> Path:
     return bids_dir().joinpath(".bidsignore")
 
 
-def datacite():
+def datacite() -> Path:
     return bids_dir().joinpath("derivatives", "bids2cite", "datacite.yml")
 
 
-def citation():
+def citation() -> Path:
     return bids_dir().joinpath("derivatives", "bids2cite", "CITATION.cff")
 
 
-def dataset_description():
+def dataset_description() -> Path:
     return bids_dir().joinpath("derivatives", "bids2cite", "dataset_description.json")
 
 
