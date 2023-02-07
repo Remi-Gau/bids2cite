@@ -21,7 +21,6 @@ def test_get_reference_id(reference, expected):
 
 
 def test_references_for_datacite():
-
     tmp = references_for_datacite(
         references=[{"citation": "foobarbaz"}, {"citation": ""}, {"citation": " "}]
     )

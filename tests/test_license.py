@@ -10,7 +10,6 @@ from bids2cite.license import update_license
 
 
 def test_add_license_file():
-
     output_dir = get_test_dir().joinpath("bids", "derivatives", "bids2cite")
 
     add_license_file("PDDL-1.0", output_dir)
@@ -23,7 +22,6 @@ def test_add_license_file():
 
 
 def test_update_license():
-
     bids_dir = get_test_dir().joinpath("bids")
     output_dir = get_test_dir().joinpath("bids", "derivatives", "bids2cite")
 
@@ -50,7 +48,6 @@ def test_update_license():
     ],
 )
 def test_identify_license(input, expected):
-
     ds_desc = {"License": input}
 
     (name, url) = identify_license(ds_desc)

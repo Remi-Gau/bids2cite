@@ -92,7 +92,6 @@ def update_license(
 
     license_file_present = "LICENSE" in [x.name for x in output_dir.glob("LICENSE*")]
     if name == "":
-
         if license_file_present:
             log.warning(
                 """License found in output folder but not dataset_description.json."""
@@ -147,7 +146,6 @@ def manually_add_license(
     print()
 
     if add_license == "yes":
-
         licenses = list(supported_licenses().keys())
         choices = [str(i + 1) for i, _ in enumerate(licenses)]
 
