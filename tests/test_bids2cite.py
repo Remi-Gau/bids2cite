@@ -38,7 +38,6 @@ def cleanup() -> None:
 
 
 def test_update_bidsignore() -> None:
-
     cleanup()
 
     update_bidsignore(bids_dir=bids_dir())
@@ -59,7 +58,6 @@ def test_update_bidsignore() -> None:
 
 
 def test_bids2cite_datacite() -> None:
-
     cleanup()
 
     bids_dir = get_test_dir().joinpath("bids")
@@ -80,7 +78,6 @@ def test_bids2cite_datacite() -> None:
     assert not citation().exists()
 
     with dataset_description().open("r") as f:
-
         content = json.load(f)
 
         assert content.get("authors") is None
@@ -97,7 +94,6 @@ def test_bids2cite_datacite() -> None:
 
 
 def test_bids2cite_citation() -> None:
-
     bids_dir = get_test_dir().joinpath("bids")
 
     cleanup()

@@ -71,7 +71,6 @@ def update_references(
 
     if "ReferencesAndLinks" in ds_desc:
         for reference in ds_desc["ReferencesAndLinks"]:
-
             this_reference = get_reference_details(reference)
 
             references.append(this_reference)
@@ -84,7 +83,6 @@ def update_references(
 
     add_references = "yes"
     while add_references == "yes":
-
         add_references = Prompt.ask(
             prompt_format("Do you want to add more references?"),
             default="yes",
@@ -142,7 +140,6 @@ def get_reference_info_from_pmid(pmid: str) -> None | dict[str, Any]:
     response = requests.get(url)
 
     if response.status_code == 200:
-
         content = response.json()["result"]
         if pmid in content:
             content = content[pmid]

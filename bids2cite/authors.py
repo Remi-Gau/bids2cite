@@ -157,7 +157,6 @@ def update_authors(
     add_authors = "yes"
 
     while add_authors == "yes":
-
         print_ordered_list(msg="Current authors:", items=authors)
 
         add_authors = Prompt.ask(
