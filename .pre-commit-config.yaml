@@ -12,7 +12,7 @@ repos:
           - id: debug-statements
 
     - repo: https://github.com/psf/black
-      rev: "23.3.0"
+      rev: "23.7.0"
       hooks:
           - id: black
 
@@ -23,7 +23,7 @@ repos:
           exclude: tests_.*.py|version.*.py|setup.py
 
     - repo: https://github.com/ikamensh/flynt/
-      rev: "0.78"
+      rev: "1.0.0"
       hooks:
           - id: flynt
 
@@ -47,7 +47,7 @@ repos:
             args: ["--config-file", "setup.cfg"]
 
     -   repo: https://github.com/asottile/pyupgrade
-        rev: v3.8.0
+        rev: v3.9.0
         hooks:
         -   id: pyupgrade
             args: [--py38-plus]
