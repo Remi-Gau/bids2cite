@@ -101,7 +101,6 @@ servedocs: docs ## compile the docs watching for changes
 coverage: ## use coverage
 	coverage erase
 	coverage run --source bids2cite -m pytest
-	coverage report -m
 
 test: ## run tests with pytest
 	pytest

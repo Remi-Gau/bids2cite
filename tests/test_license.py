@@ -4,9 +4,9 @@ import pytest
 
 from .utils import get_test_dir
 from .utils import license_file
-from bids2cite.license import add_license_file
-from bids2cite.license import identify_license
-from bids2cite.license import update_license
+from bids2cite._license import add_license_file
+from bids2cite._license import identify_license
+from bids2cite._license import update_license
 
 
 def test_add_license_file():

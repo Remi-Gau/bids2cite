@@ -108,7 +108,7 @@ from pathlib import Path
 
 path_to_bids_dataset = Path("path/to/bids/dataset")
 
-main(
+bids2cite(
     bids_dir=path_to_bids_dataset,
     description="add something",
     keywords=["foo", "bar"],

@@ -62,11 +62,11 @@ doc = [
     "sphinx-rtd-theme"
 ]
 docs = ["bids2cite[doc]"]
-test = ["pytest", "coverage"]
+test = ["pytest", "pytest-cov", "coverage"]
 tests = ["bids2cite[test]"]
 
 [project.scripts]
-bids2cite = "bids2cite.bids2cite:cli"
+bids2cite = "bids2cite.bids2cite:_cli"
 
 [project.urls]
 Homepage = "https://github.com/Remi-Gau/bids2cite"

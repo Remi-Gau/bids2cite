@@ -20,27 +20,27 @@ from rich import print
 from rich.prompt import Prompt
 from rich_argparse import RichHelpFormatter
 
+from bids2cite._authors import authors_for_citation
+from bids2cite._authors import authors_for_desc
+from bids2cite._authors import update_authors
+from bids2cite._license import supported_licenses
+from bids2cite._license import update_license
+from bids2cite._references import references_for_citation
+from bids2cite._references import references_for_datacite
+from bids2cite._references import update_references
+from bids2cite._utils import bids2cite_log
+from bids2cite._utils import default_log_level
+from bids2cite._utils import log_levels
+from bids2cite._utils import print_ordered_list
+from bids2cite._utils import prompt_format
 from bids2cite._version import __version__
-from bids2cite.authors import authors_for_citation
-from bids2cite.authors import authors_for_desc
-from bids2cite.authors import update_authors
-from bids2cite.license import supported_licenses
-from bids2cite.license import update_license
-from bids2cite.references import references_for_citation
-from bids2cite.references import references_for_datacite
-from bids2cite.references import update_references
-from bids2cite.utils import bids2cite_log
-from bids2cite.utils import default_log_level
-from bids2cite.utils import log_levels
-from bids2cite.utils import print_ordered_list
-from bids2cite.utils import prompt_format
 
 bids_dir = Path(__file__).parent.joinpath("tests", "bids")
 
 log = logging.getLogger("bids2datacite")
 
 
-def update_bidsignore(bids_dir: Path) -> None:
+def _update_bidsignore(bids_dir: Path) -> None:
     """Update the .bidsignore file."""
     log.info("updating .bidsignore")
     bidsignore = bids_dir.joinpath(".bidsignore")
@@ -55,7 +55,7 @@ def update_bidsignore(bids_dir: Path) -> None:
                 f.write("datacite.yml")
 
 
-def update_description(description: str | None = None, skip_prompt: bool = False) -> str:
+def _update_description(description: str | None = None, skip_prompt: bool = False) -> str:
     """Update the description of the dataset."""
     log.info("update description")
     if description not in [None, ""]:
@@ -70,7 +70,7 @@ def update_description(description: str | None = None, skip_prompt: bool = False
     return description
 
 
-def update_keywords(
+def _update_keywords(
     keywords: list[Any] | None = None, skip_prompt: bool = False
 ) -> list[str]:
     """Update the keywords of the dataset."""
@@ -103,7 +103,7 @@ def update_keywords(
     return keywords
 
 
-def update_funding(ds_desc: dict[str, Any], skip_prompt: bool = False) -> list[str]:
+def _update_funding(ds_desc: dict[str, Any], skip_prompt: bool = False) -> list[str]:
     """Update the funding of the dataset."""
     log.info("update funding")
 
@@ -133,11 +133,11 @@ def update_funding(ds_desc: dict[str, Any], skip_prompt: bool = False) -> list[s
     return funding
 
 
-def cli(argv: Any = sys.argv) -> None:
+def _cli(argv: Any = sys.argv) -> None:
     """Execute the main script for CLI."""
     log = bids2cite_log(name="bids2datacite")
 
-    parser = common_parser(formatter_class=RichHelpFormatter)
+    parser = _common_parser(formatter_class=RichHelpFormatter)
 
     args = parser.parse_args(argv[1:])
 
@@ -215,13 +215,13 @@ def bids2cite(
     with open(ds_descr_file) as f:
         ds_desc: dict[str, Any] = json.load(f)
 
-    description = update_description(description, skip_prompt)
+    description = _update_description(description, skip_prompt)
 
     authors = update_authors(ds_desc, skip_prompt, authors_file)
 
     references = update_references(ds_desc, skip_prompt)
 
-    funding = update_funding(ds_desc, skip_prompt)
+    funding = _update_funding(ds_desc, skip_prompt)
 
     if license is not None:
         ds_desc["License"] = license
@@ -229,9 +229,9 @@ def bids2cite(
         bids_dir, output_dir, ds_desc, skip_prompt
     )
 
-    keywords = update_keywords(keywords, skip_prompt)
+    keywords = _update_keywords(keywords, skip_prompt)
 
-    update_bidsignore(bids_dir)
+    _update_bidsignore(bids_dir)
 
     """dataset_description.json"""
 
@@ -304,7 +304,9 @@ def bids2cite(
         )
 
 
-def common_parser(formatter_class: type[HelpFormatter] = HelpFormatter) -> ArgumentParser:
+def _common_parser(
+    formatter_class: type[HelpFormatter] = HelpFormatter,
+) -> ArgumentParser:
     """Execute the main script."""
     parser = ArgumentParser(
         description="BIDS app to create citation file for your BIDS dataset.",
