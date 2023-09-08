@@ -35,7 +35,6 @@ from bids2cite._utils import print_ordered_list
 from bids2cite._utils import prompt_format
 from bids2cite._version import __version__
 
-bids_dir = Path(__file__).parent.joinpath("tests", "bids")
 
 log = logging.getLogger("bids2datacite")
 
@@ -43,7 +42,7 @@ log = logging.getLogger("bids2datacite")
 def _update_bidsignore(bids_dir: Path) -> None:
     """Update the .bidsignore file."""
     log.info("updating .bidsignore")
-    bidsignore = bids_dir.joinpath(".bidsignore")
+    bidsignore = bids_dir / ".bidsignore"
     if not bidsignore.exists():
         with bidsignore.open("w") as f:
             f.write("datacite.yml")
@@ -200,10 +199,10 @@ def bids2cite(
 
     log.info(f"bids_dir: {bids_dir}")
 
-    output_dir = bids_dir.joinpath("derivatives", "bids2cite")
+    output_dir = bids_dir / "derivatives" / "bids2cite"
     output_dir.mkdir(exist_ok=True, parents=True)
 
-    ds_descr_file = bids_dir.joinpath("dataset_description.json")
+    ds_descr_file = bids_dir / "dataset_description.json"
 
     yaml = ruamel.yaml.YAML()
     yaml.indent(mapping=2, sequence=4, offset=2)
@@ -240,7 +239,7 @@ def bids2cite(
     ds_desc["Funding"] = funding
     ds_desc["License"] = license_name
 
-    output_file = output_dir.joinpath("dataset_description.json")
+    output_file = output_dir / "dataset_description.json"
     log.info(f"updating {output_file}")
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(ds_desc, f, indent=4)
@@ -267,7 +266,7 @@ def bids2cite(
         datacite["license"]["url"] = license_url
         datacite["keywords"] = keywords
 
-        datacite_file = output_dir.joinpath("datacite.yml")
+        datacite_file = output_dir / "datacite.yml"
         log.info(f"creating {datacite_file}")
         with open(datacite_file, "w", encoding="utf-8") as f:
             yaml.dump(datacite, f)
@@ -293,7 +292,7 @@ def bids2cite(
             citation["message"] = "TODO"
         citation["identifiers"] = references_for_citation(references)
 
-        citation_file = output_dir.joinpath("CITATION.cff")
+        citation_file = output_dir / "CITATION.cff"
         log.info(f"creating {citation_file}")
         with open(citation_file, "w", encoding="utf-8") as f:
             yaml.dump(citation, f)

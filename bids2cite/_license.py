@@ -60,7 +60,7 @@ def add_license_file(license_type: str, output_dir: Path) -> None:
     response = requests.get(url)  # type: ignore
 
     if response.status_code == 200:
-        license_file = output_dir.joinpath("LICENSE")
+        license_file = output_dir / "LICENSE"
         license_file.parent.mkdir(parents=True, exist_ok=True)
         log.info(f"creating {license_file}")
         try:
