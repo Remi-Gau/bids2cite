@@ -26,7 +26,8 @@ dependencies = [
     "pandas",
     "requests",
     "rich",
-    "ruamel.yaml"
+    "ruamel.yaml",
+    "rich_argparse"
 ]
 description = "Create a citation file for a BIDS dataset."
 dynamic = ["version"]
@@ -57,12 +58,11 @@ doc = [
     "rstcheck",
     "sphinx",
     "sphinx-argparse",
-    "sphinx-argparse",
     "sphinx-copybutton",
     "sphinx-rtd-theme"
 ]
 docs = ["bids2cite[doc]"]
-test = ["pytest", "pytest-cov", "coverage"]
+test = ["pytest", "coverage"]
 tests = ["bids2cite[test]"]
 
 [project.scripts]
@@ -102,8 +102,9 @@ module = [
     "ruamel.*",
     "cffconvert.*",
     "rich.*",
-    "pandas.*",
-    "crossref_commons.*"
+    "crossref_commons.*",
+    "rich_argparse.*",
+    'bids2cite._version'
 ]
 
 [[tool.mypy.overrides]]

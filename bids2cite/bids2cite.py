@@ -5,19 +5,20 @@ details on the format of datacite for GIN: https://gin.g-node.org/G-Node/Info/wi
 """
 from __future__ import annotations
 
-import argparse
 import json
 import logging
 import sys
+from argparse import ArgumentParser
+from argparse import HelpFormatter
 from pathlib import Path
 from typing import Any
-from typing import IO
 
 import ruamel.yaml
 from cffconvert.cli.create_citation import create_citation
 from cffconvert.cli.validate_or_write_output import validate_or_write_output
 from rich import print
 from rich.prompt import Prompt
+from rich_argparse import RichHelpFormatter
 
 from bids2cite._version import __version__
 from bids2cite.authors import authors_for_citation
@@ -136,7 +137,7 @@ def cli(argv: Any = sys.argv) -> None:
     """Execute the main script for CLI."""
     log = bids2cite_log(name="bids2datacite")
 
-    parser = common_parser()
+    parser = common_parser(formatter_class=RichHelpFormatter)
 
     args = parser.parse_args(argv[1:])
 
@@ -303,21 +304,15 @@ def bids2cite(
         )
 
 
-class MuhParser(argparse.ArgumentParser):
-    """Parser for the main script."""
-
-    def _print_message(self, message: str, file: IO[str] | None = None) -> None:
-        print(message, file=file)
-
-
-def common_parser() -> MuhParser:
+def common_parser(formatter_class: type[HelpFormatter] = HelpFormatter) -> ArgumentParser:
     """Execute the main script."""
-    parser = MuhParser(
+    parser = ArgumentParser(
         description="BIDS app to create citation file for your BIDS dataset.",
         epilog="""
         For a more readable version of this help section,
         see the online ".
         """,
+        formatter_class=formatter_class,
     )
 
     parser.add_argument(
