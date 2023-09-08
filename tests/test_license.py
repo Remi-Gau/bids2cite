@@ -1,29 +1,27 @@
 from __future__ import annotations
 
 import pytest
-from utils import get_test_dir
-from utils import license_file
 
-from bids2cite.license import add_license_file
-from bids2cite.license import identify_license
-from bids2cite.license import update_license
+from bids2cite._license import add_license_file
+from bids2cite._license import identify_license
+from bids2cite._license import update_license
 
 
-def test_add_license_file():
-    output_dir = get_test_dir().joinpath("bids", "derivatives", "bids2cite")
+def test_add_license_file(bids_dir, license_file):
+    output_dir = bids_dir / "derivatives" / "bids2cite"
 
     add_license_file("PDDL-1.0", output_dir)
 
-    assert license_file().exists()
-    license_file().unlink(missing_ok=True)
+    assert license_file.exists()
+    license_file.unlink(missing_ok=True)
 
     add_license_file("None", output_dir)
-    assert not license_file().exists()
+    assert not license_file.exists()
+    license_file.unlink(missing_ok=True)
 
 
-def test_update_license():
-    bids_dir = get_test_dir().joinpath("bids")
-    output_dir = get_test_dir().joinpath("bids", "derivatives", "bids2cite")
+def test_update_license(bids_dir, license_file):
+    output_dir = bids_dir / "derivatives" / "bids2cite"
 
     ds_desc = {"License": "PDDL"}
 
@@ -34,8 +32,7 @@ def test_update_license():
     assert license_name == "PDDL-1.0"
     assert license_url == "https://opendatacommons.org/licenses/pddl/1-0/"
 
-    assert license_file().exists()
-    license_file().unlink(missing_ok=True)
+    assert license_file.exists()
 
 
 @pytest.mark.parametrize(
@@ -50,6 +47,6 @@ def test_update_license():
 def test_identify_license(input, expected):
     ds_desc = {"License": input}
 
-    (name, url) = identify_license(ds_desc)
+    (name, _) = identify_license(ds_desc)
 
     assert name == expected

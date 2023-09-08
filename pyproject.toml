@@ -1,10 +1,121 @@
 [build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+build-backend = "hatchling.build"
+requires = ["hatchling", "hatch-vcs"]
+
+[project]
+authors = [{name = "Rémi Gau"}]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved",
+    "Programming Language :: Python",
+    "Topic :: Software Development",
+    "Topic :: Scientific/Engineering",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Operating System :: Unix",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11"
+]
+dependencies = [
+    "cffconvert",
+    "crossref-commons",
+    "pandas",
+    "requests",
+    "rich",
+    "ruamel.yaml",
+    "rich_argparse"
+]
+description = "Create a citation file for a BIDS dataset."
+dynamic = ["version"]
+license = {text = "LGPL-3.0"}
+maintainers = [{name = "Rémi Gau", email = "remi.gau@gmail.com"}]
+name = "bids2cite"
+readme = "README.md"
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+dev = [
+    "bids2cite[doc,test]",
+    "codespell",
+    "black",
+    "flake8",
+    "flake8-docstrings",
+    "flake8-use-fstring",
+    "flake8-functions",
+    "mypy",
+    "pandas-stubs",
+    "pre-commit",
+    "sourcery",
+    "types-requests",
+    'tomli'
+]
+doc = [
+    "myst-parser",
+    "rstcheck",
+    "sphinx",
+    "sphinx-argparse",
+    "sphinx-copybutton",
+    "sphinx-rtd-theme"
+]
+docs = ["bids2cite[doc]"]
+test = ["pytest", "pytest-cov", "coverage"]
+tests = ["bids2cite[test]"]
+
+[project.scripts]
+bids2cite = "bids2cite.bids2cite:_cli"
+
+[project.urls]
+Homepage = "https://github.com/Remi-Gau/bids2cite"
 
 [tool.black]
 line-length = 90
 
 [tool.codespell]
-skip = "*.svg,*.eps,.git,env,*build,.mypy*"
 builtin = "clear,rare"
+skip = "*.svg,*.eps,.git,env,*build,.mypy*"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "bids2cite/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["bids2cite"]
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.mypy]
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = [
+    "ruamel.*",
+    "cffconvert.*",
+    "rich.*",
+    "crossref_commons.*",
+    "rich_argparse.*",
+    'bids2cite._version'
+]
+
+[[tool.mypy.overrides]]
+ignore_errors = true
+module = [
+    'tests.*',
+    'docs.*',
+    'bids2cite._version'
+]
+
+[tool.pytest.ini_options]
+addopts = "-ra -q -vv --cov bids2cite "
+norecursedirs = "data"
+testpaths = ["tests/"]

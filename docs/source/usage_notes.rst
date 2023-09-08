@@ -18,4 +18,4 @@ Command-Line Arguments
 .. argparse::
    :prog: bids2cite
    :module: bids2cite.bids2cite
-   :func: common_parser
+   :func: _common_parser

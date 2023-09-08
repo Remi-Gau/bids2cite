@@ -1,0 +1,18 @@
+[flake8]
+max-line-length = 110
+max-complexity = 10
+max_function_length = 105
+max_parameters_amount = 7
+max_returns_amount = 5
+count = True
+show-source = True
+statistics = True
+exclude =
+    *build
+    .git
+    __pycache__
+    tests/*
+    _version.py
+    docs/**
+per-file-ignores =
+    __init__.py: D104

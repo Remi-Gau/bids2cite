@@ -5,48 +5,44 @@ details on the format of datacite for GIN: https://gin.g-node.org/G-Node/Info/wi
 """
 from __future__ import annotations
 
-import argparse
 import json
 import logging
 import sys
+from argparse import ArgumentParser
+from argparse import HelpFormatter
 from pathlib import Path
 from typing import Any
-from typing import IO
 
 import ruamel.yaml
 from cffconvert.cli.create_citation import create_citation
 from cffconvert.cli.validate_or_write_output import validate_or_write_output
 from rich import print
 from rich.prompt import Prompt
+from rich_argparse import RichHelpFormatter
 
-from . import _version
+from bids2cite._authors import authors_for_citation
+from bids2cite._authors import authors_for_desc
+from bids2cite._authors import update_authors
+from bids2cite._license import supported_licenses
+from bids2cite._license import update_license
+from bids2cite._references import references_for_citation
+from bids2cite._references import references_for_datacite
+from bids2cite._references import update_references
+from bids2cite._utils import bids2cite_log
+from bids2cite._utils import default_log_level
+from bids2cite._utils import log_levels
+from bids2cite._utils import print_ordered_list
+from bids2cite._utils import prompt_format
+from bids2cite._version import __version__
 
-__version__ = _version.get_versions()["version"]
-
-from bids2cite.authors import update_authors, authors_for_desc, authors_for_citation
-from bids2cite.license import update_license, supported_licenses
-from bids2cite.references import (
-    update_references,
-    references_for_datacite,
-    references_for_citation,
-)
-from bids2cite.utils import (
-    bids2cite_log,
-    print_ordered_list,
-    prompt_format,
-    log_levels,
-    default_log_level,
-)
-
-bids_dir = Path(__file__).parent.joinpath("tests", "bids")
 
 log = logging.getLogger("bids2datacite")
 
 
-def update_bidsignore(bids_dir: Path) -> None:
+def _update_bidsignore(bids_dir: Path) -> None:
     """Update the .bidsignore file."""
     log.info("updating .bidsignore")
-    bidsignore = bids_dir.joinpath(".bidsignore")
+    bidsignore = bids_dir / ".bidsignore"
     if not bidsignore.exists():
         with bidsignore.open("w") as f:
             f.write("datacite.yml")
@@ -58,7 +54,7 @@ def update_bidsignore(bids_dir: Path) -> None:
                 f.write("datacite.yml")
 
 
-def update_description(description: str | None = None, skip_prompt: bool = False) -> str:
+def _update_description(description: str | None = None, skip_prompt: bool = False) -> str:
     """Update the description of the dataset."""
     log.info("update description")
     if description not in [None, ""]:
@@ -73,7 +69,7 @@ def update_description(description: str | None = None, skip_prompt: bool = False
     return description
 
 
-def update_keywords(
+def _update_keywords(
     keywords: list[Any] | None = None, skip_prompt: bool = False
 ) -> list[str]:
     """Update the keywords of the dataset."""
@@ -106,7 +102,7 @@ def update_keywords(
     return keywords
 
 
-def update_funding(ds_desc: dict[str, Any], skip_prompt: bool = False) -> list[str]:
+def _update_funding(ds_desc: dict[str, Any], skip_prompt: bool = False) -> list[str]:
     """Update the funding of the dataset."""
     log.info("update funding")
 
@@ -136,11 +132,11 @@ def update_funding(ds_desc: dict[str, Any], skip_prompt: bool = False) -> list[s
     return funding
 
 
-def cli(argv: Any = sys.argv) -> None:
+def _cli(argv: Any = sys.argv) -> None:
     """Execute the main script for CLI."""
     log = bids2cite_log(name="bids2datacite")
 
-    parser = common_parser()
+    parser = _common_parser(formatter_class=RichHelpFormatter)
 
     args = parser.parse_args(argv[1:])
 
@@ -203,10 +199,10 @@ def bids2cite(
 
     log.info(f"bids_dir: {bids_dir}")
 
-    output_dir = bids_dir.joinpath("derivatives", "bids2cite")
+    output_dir = bids_dir / "derivatives" / "bids2cite"
     output_dir.mkdir(exist_ok=True, parents=True)
 
-    ds_descr_file = bids_dir.joinpath("dataset_description.json")
+    ds_descr_file = bids_dir / "dataset_description.json"
 
     yaml = ruamel.yaml.YAML()
     yaml.indent(mapping=2, sequence=4, offset=2)
@@ -218,13 +214,13 @@ def bids2cite(
     with open(ds_descr_file) as f:
         ds_desc: dict[str, Any] = json.load(f)
 
-    description = update_description(description, skip_prompt)
+    description = _update_description(description, skip_prompt)
 
     authors = update_authors(ds_desc, skip_prompt, authors_file)
 
     references = update_references(ds_desc, skip_prompt)
 
-    funding = update_funding(ds_desc, skip_prompt)
+    funding = _update_funding(ds_desc, skip_prompt)
 
     if license is not None:
         ds_desc["License"] = license
@@ -232,9 +228,9 @@ def bids2cite(
         bids_dir, output_dir, ds_desc, skip_prompt
     )
 
-    keywords = update_keywords(keywords, skip_prompt)
+    keywords = _update_keywords(keywords, skip_prompt)
 
-    update_bidsignore(bids_dir)
+    _update_bidsignore(bids_dir)
 
     """dataset_description.json"""
 
@@ -243,7 +239,7 @@ def bids2cite(
     ds_desc["Funding"] = funding
     ds_desc["License"] = license_name
 
-    output_file = output_dir.joinpath("dataset_description.json")
+    output_file = output_dir / "dataset_description.json"
     log.info(f"updating {output_file}")
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(ds_desc, f, indent=4)
@@ -270,7 +266,7 @@ def bids2cite(
         datacite["license"]["url"] = license_url
         datacite["keywords"] = keywords
 
-        datacite_file = output_dir.joinpath("datacite.yml")
+        datacite_file = output_dir / "datacite.yml"
         log.info(f"creating {datacite_file}")
         with open(datacite_file, "w", encoding="utf-8") as f:
             yaml.dump(datacite, f)
@@ -296,7 +292,7 @@ def bids2cite(
             citation["message"] = "TODO"
         citation["identifiers"] = references_for_citation(references)
 
-        citation_file = output_dir.joinpath("CITATION.cff")
+        citation_file = output_dir / "CITATION.cff"
         log.info(f"creating {citation_file}")
         with open(citation_file, "w", encoding="utf-8") as f:
             yaml.dump(citation, f)
@@ -307,21 +303,17 @@ def bids2cite(
         )
 
 
-class MuhParser(argparse.ArgumentParser):
-    """Parser for the main script."""
-
-    def _print_message(self, message: str, file: IO[str] | None = None) -> None:
-        print(message, file=file)
-
-
-def common_parser() -> MuhParser:
+def _common_parser(
+    formatter_class: type[HelpFormatter] = HelpFormatter,
+) -> ArgumentParser:
     """Execute the main script."""
-    parser = MuhParser(
+    parser = ArgumentParser(
         description="BIDS app to create citation file for your BIDS dataset.",
         epilog="""
         For a more readable version of this help section,
         see the online ".
         """,
+        formatter_class=formatter_class,
     )
 
     parser.add_argument(
