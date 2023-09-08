@@ -17,11 +17,11 @@ def test_add_license_file(bids_dir, license_file):
 
     add_license_file("None", output_dir)
     assert not license_file.exists()
+    license_file.unlink(missing_ok=True)
 
 
-def test_update_license(root_test_dir, license_file):
-    bids_dir = root_test_dir.joinpath("bids")
-    output_dir = root_test_dir.joinpath("bids", "derivatives", "bids2cite")
+def test_update_license(bids_dir, license_file):
+    output_dir = bids_dir / "derivatives" / "bids2cite"
 
     ds_desc = {"License": "PDDL"}
 
