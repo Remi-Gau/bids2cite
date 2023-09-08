@@ -110,7 +110,8 @@ module = [
 ignore_errors = true
 module = [
     'tests.*',
-    'docs.*'
+    'docs.*',
+    'bids2cite._version'
 ]
 
 [tool.pytest.ini_options]
