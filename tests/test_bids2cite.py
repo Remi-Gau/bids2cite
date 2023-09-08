@@ -3,9 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from utils import get_test_dir
-from utils import license_file
-
+from .utils import get_test_dir
+from .utils import license_file
 from bids2cite.bids2cite import bids2cite
 from bids2cite.bids2cite import update_bidsignore
 

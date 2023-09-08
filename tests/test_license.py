@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import pytest
-from utils import get_test_dir
-from utils import license_file
 
+from .utils import get_test_dir
+from .utils import license_file
 from bids2cite.license import add_license_file
 from bids2cite.license import identify_license
 from bids2cite.license import update_license

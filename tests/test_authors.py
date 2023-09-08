@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import pytest
-from utils import get_test_dir
 
+from .utils import get_test_dir
 from bids2cite.authors import choose_from_new_authors
 from bids2cite.authors import display_new_authors
 from bids2cite.authors import get_author_info_from_orcid

@@ -66,10 +66,11 @@ author = "Remi Gau"
 # the built documents.
 #
 # The short X.Y version.
-version = bids2cite.__version__
+from bids2cite._version import __version__
 
+version = __version__
 # The full version, including alpha/beta/rc tags.
-release = bids2cite.__version__
+release = __version__
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.

@@ -19,24 +19,20 @@ from cffconvert.cli.validate_or_write_output import validate_or_write_output
 from rich import print
 from rich.prompt import Prompt
 
-from . import _version
-
-__version__ = _version.get_versions()["version"]
-
-from bids2cite.authors import update_authors, authors_for_desc, authors_for_citation
-from bids2cite.license import update_license, supported_licenses
-from bids2cite.references import (
-    update_references,
-    references_for_datacite,
-    references_for_citation,
-)
-from bids2cite.utils import (
-    bids2cite_log,
-    print_ordered_list,
-    prompt_format,
-    log_levels,
-    default_log_level,
-)
+from bids2cite._version import __version__
+from bids2cite.authors import authors_for_citation
+from bids2cite.authors import authors_for_desc
+from bids2cite.authors import update_authors
+from bids2cite.license import supported_licenses
+from bids2cite.license import update_license
+from bids2cite.references import references_for_citation
+from bids2cite.references import references_for_datacite
+from bids2cite.references import update_references
+from bids2cite.utils import bids2cite_log
+from bids2cite.utils import default_log_level
+from bids2cite.utils import log_levels
+from bids2cite.utils import print_ordered_list
+from bids2cite.utils import prompt_format
 
 bids_dir = Path(__file__).parent.joinpath("tests", "bids")
 
