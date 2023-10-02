@@ -35,6 +35,8 @@ from bids2cite._utils import print_ordered_list
 from bids2cite._utils import prompt_format
 from bids2cite._version import __version__
 
+yaml = ruamel.yaml.YAML()
+yaml.indent(mapping=2, sequence=4, offset=2)
 
 log = logging.getLogger("bids2datacite")
 
@@ -203,9 +205,6 @@ def bids2cite(
     output_dir.mkdir(exist_ok=True, parents=True)
 
     ds_descr_file = bids_dir / "dataset_description.json"
-
-    yaml = ruamel.yaml.YAML()
-    yaml.indent(mapping=2, sequence=4, offset=2)
 
     if not ds_descr_file.exists():
         log.error(f"dataset_description.json not found in {bids_dir}")
