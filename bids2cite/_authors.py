@@ -1,4 +1,5 @@
 """Deal with authors."""
+
 from __future__ import annotations
 
 import logging

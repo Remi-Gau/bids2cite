@@ -3,6 +3,7 @@ Add a datacite to your BIDS dataset.
 
 details on the format of datacite for GIN: https://gin.g-node.org/G-Node/Info/wiki/DOIfile
 """
+
 from __future__ import annotations
 
 import json

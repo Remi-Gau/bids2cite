@@ -1,4 +1,5 @@
 """Deal with references."""
+
 from __future__ import annotations
 
 import logging
@@ -54,9 +55,9 @@ def get_reference_details(reference: str) -> dict[str, str]:
     this_reference = {"citation": reference, "id": ref_id, "reftype": "IsSupplementTo"}
 
     if info is not None:
-        this_reference[
-            "citation"
-        ] = f"""{', '.join(info['authors'])}; {info['title']}; {info['journal']}; {info['year']}; {ref_id}"""
+        this_reference["citation"] = (
+            f"""{', '.join(info['authors'])}; {info['title']}; {info['journal']}; {info['year']}; {ref_id}"""
+        )
 
     return this_reference
 
