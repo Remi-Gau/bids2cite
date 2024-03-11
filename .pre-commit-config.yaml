@@ -26,12 +26,11 @@ repos:
     -   id: pretty-format-toml
         args: [--autofix, --indent, '4']
 
--   repo: https://github.com/asottile/reorder-python-imports
-    rev: v3.12.0
+-   repo: https://github.com/pycqa/isort
+    rev: 5.13.2
     hooks:
-    -   id: reorder-python-imports
-        args: [--py37-plus, --add-import, from __future__ import annotations]
-
+    -   id: isort
+        args: [--profile, black, --settings-path, pyproject.toml]
 
 -   repo: https://github.com/asottile/pyupgrade
     rev: v3.15.0
