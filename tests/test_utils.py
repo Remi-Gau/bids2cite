@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from bids2cite._utils import print_ordered_list
-from bids2cite._utils import prompt_format
+from bids2cite._utils import print_ordered_list, prompt_format
 
 
 def test_prompt_format():
