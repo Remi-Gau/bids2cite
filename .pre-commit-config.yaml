@@ -26,21 +26,20 @@ repos:
     -   id: pretty-format-toml
         args: [--autofix, --indent, '4']
 
--   repo: https://github.com/asottile/reorder-python-imports
-    rev: v3.12.0
+-   repo: https://github.com/pycqa/isort
+    rev: 5.13.2
     hooks:
-    -   id: reorder-python-imports
-        args: [--py37-plus, --add-import, from __future__ import annotations]
-
+    -   id: isort
+        args: [--profile, black, --settings-path, pyproject.toml]
 
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.0
+    rev: v3.15.1
     hooks:
     -   id: pyupgrade
         args: [--py38-plus]
 
 -   repo: https://github.com/psf/black
-    rev: 24.1.1
+    rev: 24.2.0
     hooks:
     -   id: black
         args: [--verbose, --config=pyproject.toml]
@@ -53,7 +52,7 @@ repos:
         additional_dependencies: [tomli]
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.8.0
+    rev: v1.9.0
     hooks:
     -   id: mypy
         additional_dependencies: [types-all, pandas-stubs]

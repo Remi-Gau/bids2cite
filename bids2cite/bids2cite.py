@@ -9,8 +9,7 @@ from __future__ import annotations
 import json
 import logging
 import sys
-from argparse import ArgumentParser
-from argparse import HelpFormatter
+from argparse import ArgumentParser, HelpFormatter
 from pathlib import Path
 from typing import Any
 
@@ -21,19 +20,20 @@ from rich import print
 from rich.prompt import Prompt
 from rich_argparse import RichHelpFormatter
 
-from bids2cite._authors import authors_for_citation
-from bids2cite._authors import authors_for_desc
-from bids2cite._authors import update_authors
-from bids2cite._license import supported_licenses
-from bids2cite._license import update_license
-from bids2cite._references import references_for_citation
-from bids2cite._references import references_for_datacite
-from bids2cite._references import update_references
-from bids2cite._utils import bids2cite_log
-from bids2cite._utils import default_log_level
-from bids2cite._utils import log_levels
-from bids2cite._utils import print_ordered_list
-from bids2cite._utils import prompt_format
+from bids2cite._authors import authors_for_citation, authors_for_desc, update_authors
+from bids2cite._license import supported_licenses, update_license
+from bids2cite._references import (
+    references_for_citation,
+    references_for_datacite,
+    update_references,
+)
+from bids2cite._utils import (
+    bids2cite_log,
+    default_log_level,
+    log_levels,
+    print_ordered_list,
+    prompt_format,
+)
 from bids2cite._version import __version__
 
 yaml = ruamel.yaml.YAML()

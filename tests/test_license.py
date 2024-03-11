@@ -2,9 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from bids2cite._license import add_license_file
-from bids2cite._license import identify_license
-from bids2cite._license import update_license
+from bids2cite._license import add_license_file, identify_license, update_license
 
 
 def test_add_license_file(bids_dir, license_file):

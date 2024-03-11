@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from bids2cite._references import get_reference_id
-from bids2cite._references import references_for_datacite
+from bids2cite._references import get_reference_id, references_for_datacite
 
 
 @pytest.mark.parametrize(

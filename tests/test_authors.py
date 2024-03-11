@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import pytest
 
-from bids2cite._authors import choose_from_new_authors
-from bids2cite._authors import display_new_authors
-from bids2cite._authors import get_author_info_from_orcid
-from bids2cite._authors import parse_author
+from bids2cite._authors import (
+    choose_from_new_authors,
+    display_new_authors,
+    get_author_info_from_orcid,
+    parse_author,
+)
 
 
 def test_display_new_authors(root_test_dir):

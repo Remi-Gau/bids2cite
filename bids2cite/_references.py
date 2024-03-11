@@ -10,8 +10,7 @@ import requests
 from rich import print
 from rich.prompt import Prompt
 
-from bids2cite._utils import print_ordered_list
-from bids2cite._utils import prompt_format
+from bids2cite._utils import print_ordered_list, prompt_format
 
 log = logging.getLogger("bids2datacite")
 

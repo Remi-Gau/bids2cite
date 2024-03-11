@@ -5,8 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from bids2cite.bids2cite import _update_bidsignore
-from bids2cite.bids2cite import bids2cite
+from bids2cite.bids2cite import _update_bidsignore, bids2cite
 
 
 @pytest.fixture

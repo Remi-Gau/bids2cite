@@ -87,6 +87,12 @@ packages = ["bids2cite"]
 [tool.hatch.version]
 source = "vcs"
 
+[tool.isort]
+combine_as_imports = true
+line_length = 90
+profile = "black"
+skip_gitignore = true
+
 [tool.mypy]
 check_untyped_defs = true
 disallow_any_generics = true
