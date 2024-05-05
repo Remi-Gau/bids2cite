@@ -18,7 +18,8 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11"
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12"
 ]
 dependencies = [
     "cffconvert",
@@ -40,18 +41,7 @@ requires-python = ">=3.8"
 [project.optional-dependencies]
 dev = [
     "bids2cite[doc,test]",
-    "codespell",
-    "black",
-    "flake8",
-    "flake8-docstrings",
-    "flake8-use-fstring",
-    "flake8-functions",
-    "mypy",
-    "pandas-stubs",
-    "pre-commit",
-    "sourcery",
-    "types-requests",
-    'tomli'
+    "sourcery"
 ]
 doc = [
     "myst-parser",
