@@ -55,7 +55,7 @@ repos:
     rev: v1.11.1
     hooks:
     -   id: mypy
-        additional_dependencies: [types-all, pandas-stubs, types-requests]
+        additional_dependencies: [pandas-stubs, types-requests]
         args: [--config-file=pyproject.toml]
 
 
