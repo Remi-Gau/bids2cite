@@ -211,7 +211,7 @@ def bids2cite(
         log.error(f"dataset_description.json not found in {bids_dir}")
         sys.exit(1)
 
-    with open(ds_descr_file) as f:
+    with ds_descr_file.open() as f:
         ds_desc: dict[str, Any] = json.load(f)
 
     description = _update_description(description, skip_prompt)
@@ -241,7 +241,7 @@ def bids2cite(
 
     output_file = output_dir / "dataset_description.json"
     log.info(f"updating {output_file}")
-    with open(output_file, "w", encoding="utf-8") as f:
+    with output_file.open("w", encoding="utf-8") as f:
         json.dump(ds_desc, f, indent=4)
 
     """datacite.yml"""
@@ -268,7 +268,7 @@ def bids2cite(
 
         datacite_file = output_dir / "datacite.yml"
         log.info(f"creating {datacite_file}")
-        with open(datacite_file, "w", encoding="utf-8") as f:
+        with datacite_file.open("w", encoding="utf-8") as f:
             yaml.dump(datacite, f)
 
     """CITATION.cff"""
@@ -294,7 +294,7 @@ def bids2cite(
 
         citation_file = output_dir / "CITATION.cff"
         log.info(f"creating {citation_file}")
-        with open(citation_file, "w", encoding="utf-8") as f:
+        with citation_file.open("w", encoding="utf-8") as f:
             yaml.dump(citation, f)
 
         citation = create_citation(infile=citation_file, url=None)

@@ -1,0 +1,1 @@
+"""bids2cite package."""

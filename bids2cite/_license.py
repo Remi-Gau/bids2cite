@@ -10,7 +10,7 @@ import requests
 from rich import print
 from rich.prompt import Prompt
 
-from bids2cite._utils import print_ordered_list, prompt_format
+from bids2cite._utils import VALID_RESPONSE, print_ordered_list, prompt_format
 
 log = logging.getLogger("bids2datacite")
 
@@ -57,9 +57,9 @@ def add_license_file(license_type: str, output_dir: Path) -> None:
         log.warning(f"No available template for license {license_type}")
         return
 
-    response = requests.get(url)  # type: ignore
+    response = requests.get(url)  # type: ignore[arg-type]
 
-    if response.status_code == 200:
+    if response.status_code == VALID_RESPONSE:
         license_file = output_dir / "LICENSE"
         license_file.parent.mkdir(parents=True, exist_ok=True)
         log.info(f"creating {license_file}")
@@ -119,7 +119,7 @@ def identify_license(ds_desc: dict[str, Any]) -> tuple[str, str]:
     for key in licenses_choices:
         if name.lower() in licenses[key]["values"]:
             name = licenses[key]["name"]
-            url = licenses[key].get("url", "")  # type: ignore
+            url = licenses[key].get("url", "")  # type: ignore[assignment]
             break
 
     if name not in [""]:

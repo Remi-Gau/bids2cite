@@ -10,7 +10,7 @@ import pandas as pd
 import requests
 from rich.prompt import Prompt
 
-from bids2cite._utils import print_ordered_list, prompt_format
+from bids2cite._utils import VALID_RESPONSE, print_ordered_list, prompt_format
 
 log = logging.getLogger("bids2datacite")
 
@@ -22,21 +22,21 @@ def affiliation_from_orcid(orcid_record: dict[str, Any]) -> str | None:
         .get("employments", {})
         .get("employment-summary", [])
     ):
-        return employer[0].get("organization", {}).get("name")
+        return str(employer[0].get("organization", {}).get("name"))
     else:
         return None
 
 
 def first_name_from_orcid(orcid_record: dict[str, Any]) -> str:
     """Return first name from ORCID record."""
-    return (
+    return str(
         orcid_record.get("person", {}).get("name", {}).get("given-names", {}).get("value")
     )
 
 
 def last_name_from_orcid(orcid_record: dict[str, Any]) -> str:
     """Return last name from ORCID record."""
-    return (
+    return str(
         orcid_record.get("person", {}).get("name", {}).get("family-name", {}).get("value")
     )
 
@@ -54,7 +54,7 @@ def get_author_info_from_orcid(orcid: str) -> dict[str, Any]:
         },
     )
     author_info = {}
-    if response.status_code == 200:
+    if response.status_code == VALID_RESPONSE:
         record = response.json()
         first_name = first_name_from_orcid(record)
         last_name = last_name_from_orcid(record)
@@ -214,7 +214,7 @@ def manually_add_author() -> str:
 (for example: 'firstname surname' or 'ORCID:0000-0002-9120-8098')"""
         )
     )
-    return author
+    return str(author)
 
 
 def authors_for_desc(authors: list[dict[str, str | None]]) -> list[str]:
@@ -229,7 +229,7 @@ def authors_for_desc(authors: list[dict[str, str | None]]) -> list[str]:
 
 
 def authors_for_citation(
-    authors: list[dict[str, str | None]]
+    authors: list[dict[str, str | None]],
 ) -> list[dict[str, str | None]]:
     """Return authors formatted for citation.cff."""
     tmp = []
@@ -240,7 +240,7 @@ def authors_for_citation(
         }
         if x.get("id"):
             orcid = x.get("id")
-            this_author["orcid"] = f"https://orcid.org/{orcid.replace('ORCID:', '')}"  # type: ignore
+            this_author["orcid"] = f"https://orcid.org/{orcid.replace('ORCID:', '')}"  # type: ignore[union-attr]
         if x.get("affiliation"):
             this_author["affiliation"] = x.get("affiliation", "")
         tmp.append(this_author)

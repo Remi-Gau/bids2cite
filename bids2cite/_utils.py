@@ -9,6 +9,10 @@ from rich import print
 from rich.logging import RichHandler
 from rich.traceback import install
 
+FORMAT = "bids2datacite - %(asctime)s - %(levelname)s - %(message)s"
+
+VALID_RESPONSE = 200
+
 
 def prompt_format(msg: str) -> str:
     """Format prompt message."""
@@ -34,8 +38,6 @@ def bids2cite_log(name: str | None = None) -> logging.Logger:
     """
     # let rich print the traceback
     install(show_locals=True)
-
-    FORMAT = "bids2datacite - %(asctime)s - %(levelname)s - %(message)s"
 
     if not name:
         name = "rich"

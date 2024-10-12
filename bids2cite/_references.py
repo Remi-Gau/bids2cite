@@ -10,9 +10,11 @@ import requests
 from rich import print
 from rich.prompt import Prompt
 
-from bids2cite._utils import print_ordered_list, prompt_format
+from bids2cite._utils import VALID_RESPONSE, print_ordered_list, prompt_format
 
 log = logging.getLogger("bids2datacite")
+
+MAX_N_AUTHORS = 3
 
 
 def get_reference_id(reference: str) -> str:
@@ -55,7 +57,7 @@ def get_reference_details(reference: str) -> dict[str, str]:
 
     if info is not None:
         this_reference["citation"] = (
-            f"""{', '.join(info['authors'])}; {info['title']}; {info['journal']}; {info['year']}; {ref_id}"""
+            f"""{', '.join(info['authors'])}; {info['title']}; {info['journal']}; {info['year']}; {ref_id}"""  # noqa
         )
 
     return this_reference
@@ -119,7 +121,7 @@ def get_reference_info_from_doi(doi: str) -> dict[str, Any] | None:
     authors = []
     for i, author in enumerate(content["author"]):
         authors.append(f"{author['given']}, {author['family']}")
-        if i > 3:
+        if i > MAX_N_AUTHORS:
             authors.append("et al.")
             break
 
@@ -139,7 +141,7 @@ def get_reference_info_from_pmid(pmid: str) -> None | dict[str, Any]:
 
     response = requests.get(url)
 
-    if response.status_code == 200:
+    if response.status_code == VALID_RESPONSE:
         content = response.json()["result"]
         if pmid in content:
             content = content[pmid]
@@ -150,7 +152,7 @@ def get_reference_info_from_pmid(pmid: str) -> None | dict[str, Any]:
         authors = []
         for i, author in enumerate(content["authors"]):
             authors.append(f"{author['name']}")
-            if i > 3:
+            if i > MAX_N_AUTHORS:
                 authors.append("et al.")
                 break
 
