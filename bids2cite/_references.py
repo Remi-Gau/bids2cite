@@ -57,7 +57,7 @@ def get_reference_details(reference: str) -> dict[str, str]:
 
     if info is not None:
         this_reference["citation"] = (
-            f"""{', '.join(info['authors'])}; {info['title']}; {info['journal']}; {info['year']}; {ref_id}"""  # noqa
+            f"""{", ".join(info["authors"])}; {info["title"]}; {info["journal"]}; {info["year"]}; {ref_id}"""  # noqa
         )
 
     return this_reference
