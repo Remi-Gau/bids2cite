@@ -177,7 +177,7 @@ def references_for_datacite(references: list[dict[str, str]]) -> list[str]:
     return [
         x["citation"]
         for x in references
-        if ((x["citation"] not in ("")) and (not x["citation"].isspace()))
+        if ((x["citation"] != "") and (not x["citation"].isspace()))
     ]
 
 

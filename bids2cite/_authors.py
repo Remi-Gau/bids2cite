@@ -83,7 +83,7 @@ def parse_author(author: str) -> dict[str, str | None]:
         "id": None,
     }
 
-    if author in (""):
+    if author == "":
         return {"firstname": None, "lastname": None}
     if "orcid:" in author.lower():
         if author_info := get_author_info_from_orcid(author.split(":")[1]):
