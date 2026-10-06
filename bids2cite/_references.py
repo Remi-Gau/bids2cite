@@ -134,7 +134,7 @@ def get_reference_info_from_doi(doi: str) -> dict[str, Any] | None:
     }
 
 
-def get_reference_info_from_pmid(pmid: str) -> None | dict[str, Any]:
+def get_reference_info_from_pmid(pmid: str) -> dict[str, Any] | None:
     """Get reference info from PubMed."""
     base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi"
     url = f"{base_url}?db=pubmed&id={pmid}&retmode=json"
